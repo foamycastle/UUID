@@ -32,9 +32,9 @@ class FieldInt extends Field implements FieldIntApi
      */
     protected int $bitOffset;
 
-    protected function __construct(
+    public function __construct(
         int $bitLength,
-        int $value = -1,
+        int $value = 0,
         int $charLength = 0,
         int $bitOffset = 0,
         ?Field $linkedField = null,
@@ -50,20 +50,33 @@ class FieldInt extends Field implements FieldIntApi
         if ($bitLength > 64) {
             $bitLength = 64;
         }
-
         $this->bitLength = $bitLength;
+
+        /*
+         * The bit offset cannot be greater than the bit length
+         */
+        $bitOffset = min($bitOffset, $bitLength);
         $this->bitOffset = $bitOffset;
+
         /**
          * Verify that the value, if supplied, has a valid bit-length
          */
-        if ($value > -1) {
-            if ($this->getBitCount($value) > $bitLength) {
+        if ($value > 0) {
+            if ($this->getBitCount($value) > $bitLength||$this->bitOffset>0) {
                 /*
                  * At this point, the value is too large for the bit-length.  If the $bitOffset property was specified, take the appropriate
                  * number of bits from the value beginning at the offset. If the offset value is 0, simply takes the value's LSBs
                  */
-                $value = $value >> $bitOffset;
+                $value = $value >> $this->bitOffset;
             }
+
+            /**
+             * If the value is greater than what the bitLength can express, truncate bits
+             */
+            if($value>$this->maxIntValue($bitLength)) {
+                $value = $this->truncateBits($bitLength,$value);
+            }
+
             //Assign the value to the property
             $this->value = $value;
         }
@@ -83,7 +96,7 @@ class FieldInt extends Field implements FieldIntApi
             /**
              * $charLength wasn't specified, so it must be inferred from the value.
              */
-            $this->charLength = $this->getHexCharCount($value ?? 0);
+            $this->charLength = $this->getHexCharCount($this->value ?? 0);
         }
 
         /**
@@ -119,20 +132,14 @@ class FieldInt extends Field implements FieldIntApi
     public function getBitOffset(): int
     {
         return $this->bitOffset;
-    }/**
-     * Return the maximum decimal value a number of binary bits may represent
-     * @param int $bits
-     * @return int
- */
-    protected function maxIntValue(int $bits): int
+    }
+
+    public function maxIntValue(int $bits): int
     {
-        return (2 ** ($this->getBitCount($bits))) - 1;
-    }/**
-     * Calculate the combined value of this field and another
-     * @param int $operation a class constant that specifies which operation should be performed on the two values
-     * @return int|null the result of the operation or null if the operation could not be performed.
- */
-    protected function getCombinedValue(int $operation): int|null
+        return (2 ** $bits) - 1;
+    }
+
+    public function getCombinedValue(int $operation): int|null
     {
 
         //if the linkedField property is not set, return null
@@ -161,12 +168,13 @@ class FieldInt extends Field implements FieldIntApi
  */
     protected function getBitCount(int $value): int
     {
-        return floor(log($value, 2)) + 1;
-    }/**
+        return (int)floor(log($value, 2)-PHP_FLOAT_EPSILON) + 1;
+    }
+    /**
      * Return the value of the field after it has been adjusted by the bit offset
      * @return int
- */
-    protected function getAdjustedFieldValue(): int
+    */
+    public function getAdjustedFieldValue(): int
     {
         return $this->value << $this->bitOffset;
     }/**
@@ -176,7 +184,25 @@ class FieldInt extends Field implements FieldIntApi
  */
     protected function getHexCharCount(int $value): int
     {
-        return floor(log($value, 16)) + 1;
+        return (int)floor(log($value, 16)) + 1;
+    }
+    public function getValue(): int
+    {
+        return $this->value;
+    }
+
+    /**
+     * Applies a bit mask to a value so that the value has only so many bits
+     * @param int $bits the number of bits the value should
+     * @param int $value the input value
+     * @return int the `$value` after the `$bits` bitmask has been applied
+     */
+    protected function truncateBits(int $bits, int $value):int
+    {
+        $bitmask = $bits==64
+            ? (PHP_INT_MAX | PHP_INT_MIN)   //all bits on
+            : (2**$bits)-1;
+        return ($value & $bitmask);
     }
 
 }

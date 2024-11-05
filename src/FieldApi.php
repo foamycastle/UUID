@@ -25,4 +25,10 @@ interface FieldApi
      */
     function setProviderKey(string $key):static;
 
+    /**
+     * Pulls data from the provider object using the $providerKey
+     * @return $this
+     */
+    function readProvider():static;
+
 }

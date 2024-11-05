@@ -48,5 +48,12 @@ abstract class Field implements FieldApi
         $this->providerKey = $key;
         return $this;
     }
+    public function readProvider(): static
+    {
+        if(isset($this->providerKey) && isset($this->provider)) {
+            $this->value = $this->provider->getData($this->providerKey);
+        }
+        return $this;
+    }
 
 }
