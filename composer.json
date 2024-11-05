@@ -1,0 +1,30 @@
+{
+  "name": "foamycastle/uuid",
+  "description": "a complete uuid library",
+  "minimum-stability": "dev",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Aaron Sollman",
+      "email": "unclepong@gmail.com"
+    }
+  ],
+  "require": {
+    "php": "^8.3",
+    "foamycastle/provision": "@dev",
+    "foamycastle/validation": "@dev"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^11.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Foamycastle\\UUID\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Foamycastle\\UUID\\": "test"
+    }
+  }
+}
