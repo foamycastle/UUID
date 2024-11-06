@@ -2,7 +2,7 @@
 
 namespace Foamycastle\UUID\Field;
 
-interface FieldStringApi extends \Stringable
+interface FieldHexApi extends \Stringable
 {
 
     /**
