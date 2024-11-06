@@ -4,7 +4,7 @@ namespace Foamycastle\UUID\Field;
 
 use Foamycastle\UUID\Field;
 
-class FieldHex extends Field implements FieldStringApi
+class FieldHex extends Field implements FieldHexApi
 {
     public const XFMR_HEX_TO_INT='hexToInt';
     /**
@@ -41,12 +41,13 @@ class FieldHex extends Field implements FieldStringApi
         $value = $this->hexStringValidation($value)
             ? $value
             : '';
+
         /**
          * If the value's length is longer than the specified character length,
-         * truncate it
+         * truncate it in a manner that preserves the LSBs of the hex value
          */
         $value = strlen($value)>$charLength
-            ? substr($value, 0, $charLength)
+            ? substr($value, -$charLength)
             : $value;
 
         //set object properties
