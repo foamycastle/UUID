@@ -27,6 +27,13 @@ class FieldHex extends Field implements FieldHexApi
      */
     protected string $padChar;
 
+
+    /**
+     * @param string $value
+     * @param int $charLength
+     * @param bool $padOutput
+     * @param string $padChar
+     */
     public function __construct(
         string $value,
         int $charLength=self::MAX_FIELD_LEN,
