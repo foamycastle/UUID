@@ -84,9 +84,10 @@ class FieldHex extends Field implements FieldHexApi
     {
         $field ??= $this->linkedField;
         if($field instanceof FieldIntApi){
+            $convertedValue=dechex($field->value);
             return new self(
-                dechex($field->value),
-                $field->charLength,
+                $convertedValue,
+                strlen($convertedValue),
                 $this->padOutput,
                 $this->padChar
             );
