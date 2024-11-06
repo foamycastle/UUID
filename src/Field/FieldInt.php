@@ -31,10 +31,7 @@ class FieldInt extends Field implements FieldIntApi
         int $bitLength,
         int $value = 0,
         int $charLength = 0,
-        int $bitOffset = 0,
-        ?self $linkedField = null,
-        ?Provider $provider = null,
-        ?string $providerKey = null
+        int $bitOffset = 0
     ) {
         /* To begin, all that needs to be defined is bit-length of the field. The maximum bit-length is 64bits.
          * Validate that now. If the supplied value is outside the valid bounds, place it at the nearest boundary.
@@ -92,25 +89,6 @@ class FieldInt extends Field implements FieldIntApi
              * $charLength wasn't specified, so it must be inferred from the value.
              */
             $this->charLength = $this->getHexCharCount($this->value ?? 0);
-        }
-
-        /**
-         * If the provider object is specified, a provider key must be specified. If a provider key is not specified,
-         * don't assign the provider object
-         */
-        if ($providerKey !== null) {
-            $this->provider    = $provider;
-            $this->providerKey = $providerKey;
-        }
-
-        /*
-         * If the linked field argument is passed, make sure that referenced field has the same bit-length as this one.
-         * Otherwise, don't assign the linked field property
-         */
-        if ($linkedField !== null) {
-            if ($linkedField->bitLength == $this->bitLength) {
-                $this->linkedField = $linkedField;
-            }
         }
     }
 
