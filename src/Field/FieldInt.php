@@ -209,11 +209,11 @@ class FieldInt extends Field implements FieldIntApi
         if($field instanceof FieldStringApi) {
             return new self(
                 $this->bitLength,
-                $field->getTransformer(self::XFMR_HEX_TO_INT)(),
+                $this->getTransformer(self::XFMR_HEX_TO_INT)(),
                 $this->charLength,
                 $this->bitOffset,
-                $this->linkedField,
-                $this->provider
+                null,
+                $this->provider ?? null
             );
         }
 

@@ -82,9 +82,11 @@ class FieldString extends Field implements FieldStringApi
         return match($transformerKey) {
 
             self::XFMR_HEX_TO_INT=>
-            function(){
-                return hexdec($this->linkedField->value);
-            }
+                function(){
+                    return hexdec($this->linkedField->value);
+                },
+            default=>
+                parent::getTransformer(self::XFMR)
         };
     }
 
