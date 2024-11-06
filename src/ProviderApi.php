@@ -17,4 +17,11 @@ interface ProviderApi
      * @return self
      */
     public function refreshData(): self;
+
+    /**
+     * Verifies that the current list of loaded providers contains a provider known by a key
+     * @param string $key
+     * @return bool
+     */
+    public static function hasKey(string $key):bool;
 }
