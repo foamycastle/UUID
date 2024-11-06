@@ -1,6 +1,6 @@
 <?php
 
-namespace Foamycastle\UUID;
+namespace Foamycastle\UUID\Field;
 
 interface FieldIntApi
 {

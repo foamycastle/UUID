@@ -1,12 +1,15 @@
 <?php
 
-namespace Foamycastle\UUID;
+namespace Foamycastle\UUID\Field;
 
 use Foamycastle\UUID\Field;
+use Foamycastle\UUID\Provider;
 
 class FieldInt extends Field implements FieldIntApi
 {
 
+
+    public const XFMR_HEX_TO_INT='hex2Int';
     public const COMBINE_NOT = 3;
     public const COMBINE_AND = 1;
     public const COMBINE_OR = 0;
@@ -18,15 +21,7 @@ class FieldInt extends Field implements FieldIntApi
      * or, if the `$offset` is set to a valid value, the value's bit started at the offset are used.
      */
     protected int $bitLength;
-    /**
-     * @var int This property contains the value of this field combined with an arbitrary outside value
-     */
-    protected int $combinedValue;
-    /**
-     * If this field is linked to another one, this property will contain the combined values of the two fields.
-     * @var int  $linkedValue;
-     */
-    protected int $linkedValue;
+
     /**
      * @var int $bitOffset A character is composed of 4 bits instead of the traditional octet. If a field's bit length is less than its character length, the bits may be offset. a value of 0 means that all the bits reside in the LSB portion of the word.  A non-zero value pushes the bits toward the MSB.
      */
@@ -37,7 +32,7 @@ class FieldInt extends Field implements FieldIntApi
         int $value = 0,
         int $charLength = 0,
         int $bitOffset = 0,
-        ?Field $linkedField = null,
+        ?self $linkedField = null,
         ?Provider $provider = null,
         ?string $providerKey = null
     ) {
@@ -62,7 +57,7 @@ class FieldInt extends Field implements FieldIntApi
          * Verify that the value, if supplied, has a valid bit-length
          */
         if ($value > 0) {
-            if ($this->getBitCount($value) > $bitLength||$this->bitOffset>0) {
+            if ($this->getBitCount($value) > $bitLength) {
                 /*
                  * At this point, the value is too large for the bit-length.  If the $bitOffset property was specified, take the appropriate
                  * number of bits from the value beginning at the offset. If the offset value is 0, simply takes the value's LSBs
@@ -203,6 +198,46 @@ class FieldInt extends Field implements FieldIntApi
             ? (PHP_INT_MAX | PHP_INT_MIN)   //all bits on
             : (2**$bits)-1;
         return ($value & $bitmask);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function mutateField(?Field $field=null): static
+    {
+        $field ??= $this->linkedField;
+        if($field instanceof FieldStringApi) {
+            return new self(
+                $this->bitLength,
+                $field->getTransformer(self::XFMR_HEX_TO_INT)(),
+                $this->charLength,
+                $this->bitOffset,
+                $this->linkedField,
+                $this->provider
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getTransformer(string $transformerKey): callable
+    {
+        return match ($transformerKey) {
+
+            /**
+             * Convert a hex string to an integer
+             */
+            self::XFMR_HEX_TO_INT=>
+            function() {
+                return hexdec($this->linkedField->value);
+            },
+
+            default=>parent::getTransformer(self::XFMR)
+        };
+
     }
 
 }

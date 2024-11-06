@@ -31,4 +31,11 @@ interface FieldApi
      */
     function readProvider():static;
 
+    /**
+     * Import a value from another field and transform it.  If the field link property has been set, that field value is read and assumed into this field
+     * @param Field|null $field If supplied, this field's value will be read and assumed into this field
+     * @return $this
+     */
+    function mutateField(?Field $field=null):static;
+
 }

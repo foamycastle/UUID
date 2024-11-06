@@ -6,6 +6,13 @@ abstract class Field implements FieldApi
 {
 
     /**
+     * Constants prefixed with 'XFMR' are used in the ::getTransformer method as match statement keys to return callables
+     * as transformers. In order to define constants in this class or child classes, prefix it with 'XFMR' and let the value of
+     * that constant be a string
+     */
+    public const XFMR='';
+
+    /**
      * @var mixed $value the value of the field.  For fields that are calculated, the value will be an int.
      * For fields that are generated or retrieved from the system, the value will be converted to an int from a string.
      */
@@ -35,7 +42,6 @@ abstract class Field implements FieldApi
     public function setLink(Field $field): static
     {
         $this->linkedField = $field;
-
         return $this;
     }
     public function setProvider(Provider $provider): static
@@ -54,6 +60,25 @@ abstract class Field implements FieldApi
             $this->value = $this->provider->getData($this->providerKey);
         }
         return $this;
+    }
+
+    /**
+     * Returns a callable that transforms a foreign field's data into this field's type and value.
+     * Place anonymous functions within the match statement body. It is helpful to define class constants
+     * and use those as match keys for each of the callables. Inside the callable body, use the 'use' statement in the function
+     * declaration to gain access to the link field property to read the referenced field's value <br><br>
+     * <b>NOTE:</b> Do not call this base function. The function below should be overridden in child classes so that it may return
+     * transformers relevant to the child class.
+     *
+     * @param string<static::XFMR_*> $transformerKey
+     * @return callable The callable that is returned should return only the field's value after it has been transformed to a new datatype
+     */
+    protected function getTransformer(string $transformerKey): callable{
+        return match($transformerKey) {
+            default=>function(){
+                return null;
+            }
+        };
     }
 
 }
