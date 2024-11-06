@@ -4,7 +4,7 @@ namespace Foamycastle\UUID\Field;
 
 use Foamycastle\UUID\Field;
 
-class FieldString extends Field implements FieldStringApi
+class FieldHex extends Field implements FieldStringApi
 {
     public const XFMR_HEX_TO_INT='hexToInt';
     /**
@@ -34,13 +34,31 @@ class FieldString extends Field implements FieldStringApi
         string $padChar = self::PAD_CHAR
     )
     {
+        /*
+         * validate the characters in the string as hexadecimal.  if the string contains
+         * non-hex characters, the value will be blank
+         */
+        $value = $this->hexStringValidation($value)
+            ? $value
+            : '';
+        /**
+         * If the value's length is longer than the specified character length,
+         * truncate it
+         */
+        $value = strlen($value)>$charLength
+            ? substr($value, 0, $charLength)
+            : $value;
+
         //set object properties
         $this->value = $value;
         $this->charLength = $charLength;
         $this->padOutput = $padOutput;
         $this->padChar = $padChar;
     }
-
+    private function hexStringValidation(string $hex):bool
+    {
+        return preg_match('/^[0-9a-fA-F]+$/i', $hex);
+    }
     public function __toString(): string
     {
         /*

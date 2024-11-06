@@ -38,4 +38,12 @@ interface FieldApi
      */
     function mutateField(?Field $field=null):static;
 
+    /**
+     * Sets the character length of the string output
+     * @param int $length
+     * @return $this
+     */
+    function setCharLength(int $length):static;
+
+
 }

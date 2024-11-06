@@ -54,6 +54,12 @@ abstract class Field implements FieldApi
         $this->providerKey = $key;
         return $this;
     }
+    public function setCharLength(int $length): static
+    {
+        $this->charLength = $length;
+        return $this;
+    }
+
     public function readProvider(): static
     {
         if(isset($this->providerKey) && isset($this->provider)) {
