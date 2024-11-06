@@ -14,9 +14,9 @@ interface ProviderApi
 
     /**
      * Perform the logic of updating the provider's data
-     * @return self
+     * @return static
      */
-    public function refreshData(): self;
+    public function refreshData(): static;
 
     /**
      * Verifies that the current list of loaded providers contains a provider known by a key
