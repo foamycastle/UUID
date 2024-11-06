@@ -8,8 +8,8 @@ use Foamycastle\UUID\Provider;
 class FieldInt extends Field implements FieldIntApi
 {
 
-
     public const XFMR_HEX_TO_INT='hex2Int';
+
     public const COMBINE_NOT = 3;
     public const COMBINE_AND = 1;
     public const COMBINE_OR = 0;
