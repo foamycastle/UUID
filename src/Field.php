@@ -44,6 +44,14 @@ abstract class Field implements FieldApi
         $this->linkedField = $field;
         return $this;
     }
+    public function unsetLink(): static
+    {
+        if (isset($this->linkedField)) {
+            unset($this->linkedField);
+        }
+        return $this;
+    }
+
     public function setProvider(Provider $provider): static
     {
         $this->provider = $provider;

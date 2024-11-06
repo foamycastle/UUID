@@ -12,6 +12,12 @@ interface FieldApi
     function setLink(Field $field):static;
 
     /**
+     * Removes the link to the referenced field
+     * @return $this
+     */
+    function unsetLink():static;
+
+    /**
      * Set the data provider property
      * @param Provider $provider
      * @return $this
