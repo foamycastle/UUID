@@ -184,7 +184,7 @@ class FieldInt extends Field implements FieldIntApi
     public function mutateField(?Field $field=null): static
     {
         $field ??= $this->linkedField;
-        if($field instanceof FieldStringApi) {
+        if($field instanceof FieldHexApi) {
             return new self(
                 $this->bitLength,
                 $this->getTransformer(self::XFMR_HEX_TO_INT)(),

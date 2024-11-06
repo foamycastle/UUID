@@ -2,7 +2,7 @@
 
 namespace Foamycastle\UUID;
 
-use Foamycastle\UUID\Field\FieldString;
+use Foamycastle\UUID\Field\FieldHex;
 use PHPUnit\Framework\TestCase;
 use Foamycastle\UUID\Field\FieldInt;
 
@@ -65,7 +65,7 @@ class FieldIntTest extends TestCase
     {
         //this test create 2 field of different types. one field then transforms and assumes the data of the other
         $fieldInt=new FieldInt(32,4000);
-        $fieldString= new FieldString('77278adb',8);
+        $fieldString= new FieldHex('77278adb',8);
 
         $fieldInt->setLink($fieldString);
 
