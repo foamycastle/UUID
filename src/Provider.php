@@ -18,6 +18,8 @@ abstract class Provider implements ProviderApi
      */
     public static array $activeProviders=[];
 
+    protected ProviderKey $key;
+
     /**
      * Register the child class in the list of active providers
      * @return void
