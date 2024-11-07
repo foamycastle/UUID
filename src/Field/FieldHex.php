@@ -117,4 +117,9 @@ class FieldHex extends Field implements FieldHexApi
         };
     }
 
+    function getValue(): int
+    {
+        return hexdec($this->pad(false));
+    }
+
 }

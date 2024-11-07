@@ -2,6 +2,8 @@
 
 namespace Foamycastle\UUID;
 
+use Foamycastle\UUID\Provider\ProviderKey;
+
 abstract class Provider implements ProviderApi
 {
 
@@ -9,14 +11,43 @@ abstract class Provider implements ProviderApi
      * Used to
      */
     private const PROVIDER_NS=__NAMESPACE__.'\\Provider\\';
+
     /**
      * Contains a list of
-     * @var array<string,Field>
+     * @var array<ProviderKey,Field>
      */
-    public static array $keys=[];
-    public static function hasKey(string $key):bool
+    public static array $activeProviders=[];
+
+    /**
+     * Register the child class in the list of active providers
+     * @return void
+     */
+    protected function register():void
     {
-        return isset(self::$keys[$key]);
+        Provider::Add($this->key,$this);
+    }
+    protected function unregister():void
+    {
+        Provider::Remove($this->key);
+    }
+
+    abstract public function __invoke(...$args):static;
+
+    public static function HasKey(string $key):bool
+    {
+        return isset(self::$activeProviders[$key]);
+    }
+
+    public static function Add(ProviderKey $key, Provider $provider):void
+    {
+        self::$activeProviders[$key->name]=$provider;
+    }
+
+    public static function Remove(ProviderKey $key):void
+    {
+        if(self::HasKey($key->name)){
+            unset(self::$activeProviders[$key->name]);
+        }
     }
 
     /**
@@ -42,4 +73,15 @@ abstract class Provider implements ProviderApi
                 : self::PROVIDER_NS.$subSpace.$providerName
         );
     }
+    public static function __callStatic(string $name, array $arguments):Provider|null
+    {
+        if(self::HasKey($name)){
+            return self::$activeProviders[$name](...$arguments);
+        }
+        if(self::Exists($name)){
+            return new (self::PROVIDER_NS.$name)(...$arguments);
+        }
+        return null;
+    }
+
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace Foamycastle\UUID\Provider\TimeProvider;
+namespace Foamycastle\UUID\Provider;
 
-use Foamycastle\UUID\Provider\TimeProvider;
+use Foamycastle\UUID\Provider;
 
 class GregorianTime extends TimeProvider
 {
@@ -10,7 +10,27 @@ class GregorianTime extends TimeProvider
     /**
      * @inheritDoc
      */
-    public function getData(string $key): mixed
+    public function __construct(public readonly int $version=1)
+    {
+        $this->key = $this->version==1
+            ? ProviderKey::GREGOR_V1
+            : ProviderKey::GREGOR_V6;
+        if(!Provider::HasKey($this->key->name)) {
+            $this->register();
+        }
+        $this->refreshData();
+    }
+
+    /**
+     * @param $args array{0:int<1|6>}
+     * @return $this
+     */
+    public function __invoke(...$args): static
+    {
+        return new self();
+    }
+
+    public function getData(): int
     {
         return $this->getTimeValue();
     }

@@ -15,6 +15,9 @@ class FieldInt extends Field implements FieldIntApi
     public const COMBINE_OR = 0;
     public const COMBINE_XOR = 2;
 
+    public const OFFSET_LEFT=0;
+    public const OFFSET_RIGHT=1;
+
     /**
      * @var int<1,64> $bitLength the length of the field in bits.  Upon field construction, the field value is compared against the
      * specified bit-length.  if the value is larger than the bit-length, the value's bits are truncated to either the LSBs
@@ -27,11 +30,15 @@ class FieldInt extends Field implements FieldIntApi
      */
     protected int $bitOffset;
 
+    protected int $combinedValue;
+    protected int $offsetDirection;
+
     public function __construct(
         int $bitLength,
-        int $value = 0,
+        int|Field|Provider $value = 0,
         int $charLength = 0,
-        int $bitOffset = 0
+        int $bitOffset = 0,
+        int $offsetDirection = self::OFFSET_RIGHT,
     ) {
         /* To begin, all that needs to be defined is bit-length of the field. The maximum bit-length is 64bits.
          * Validate that now. If the supplied value is outside the valid bounds, place it at the nearest boundary.
@@ -43,35 +50,34 @@ class FieldInt extends Field implements FieldIntApi
             $bitLength = 64;
         }
         $this->bitLength = $bitLength;
-
-        /*
-         * The bit offset cannot be greater than the bit length
-         */
-        $bitOffset = min($bitOffset, $bitLength);
         $this->bitOffset = $bitOffset;
+        $this->offsetDirection = $offsetDirection;
 
         /**
-         * Verify that the value, if supplied, has a valid bit-length
+         * If the $value argument is a reference to another field, link to that field's value instead
          */
-        if ($value > 0) {
-            if ($this->getBitCount($value) > $bitLength) {
-                /*
-                 * At this point, the value is too large for the bit-length.  If the $bitOffset property was specified, take the appropriate
-                 * number of bits from the value beginning at the offset. If the offset value is 0, simply takes the value's LSBs
-                 */
-                $value = $value >> $this->bitOffset;
+        if($value instanceof Field) {
+            $this->linkedField=$value;
+            if($value instanceof FieldInt){
+                $value = $value->getValue();
             }
-
-            /**
-             * If the value is greater than what the bitLength can express, truncate bits
-             */
-            if($value>$this->maxIntValue($bitLength)) {
-                $value = $this->truncateBits($bitLength,$value);
+            if($value instanceof FieldHex){
+                $value=$value->toInt();
             }
-
-            //Assign the value to the property
-            $this->value = $value;
         }
+
+        /**
+         * If the $value argument is a reference to a provider, read that provider's data
+         */
+        if($value instanceof Provider) {
+            $this->setProvider($value);
+            $value=$this->getValue();
+        }
+        /**
+         * Verify that the value is an integer and has a valid bit-length
+         */
+
+        $this->value=$value;
 
         /*
          * Make sure the character length, if specified, can accommodate the value when the field is rendered to a string
@@ -88,7 +94,7 @@ class FieldInt extends Field implements FieldIntApi
             /**
              * $charLength wasn't specified, so it must be inferred from the value.
              */
-            $this->charLength = $this->getHexCharCount($this->value ?? 0);
+            $this->charLength = $this->getHexCharCount($this->getValue() ?? 0);
         }
     }
 
@@ -109,47 +115,64 @@ class FieldInt extends Field implements FieldIntApi
 
     public function maxIntValue(int $bits): int
     {
+        if($bits == 0) {
+            return (PHP_INT_MAX | PHP_INT_MIN);
+        }
         return (2 ** $bits) - 1;
     }
 
-    public function getCombinedValue(int $operation): int|null
+    public function combineWith(Field|int $field, int $operation): FieldIntApi
     {
-
-        //if the linkedField property is not set, return null
-        $field = $field ?? $this->linkedField;
-        if (!isset($field)) {
-            return null;
-        }
-
-        /*
-         * if the referenced field has a bit-offset specified, copy and adjust the referenced field's value
-         */
-        $fieldValue = $field->bitOffset != 0
-            ? $field->getAdjustedFieldValue()
-            : $field->value;
-
-        return match ($operation) {
-            self::COMBINE_AND => ($this->value & $fieldValue),
-            self::COMBINE_OR  => ($this->value | $fieldValue),
-            self::COMBINE_XOR => ($this->value ^ $fieldValue),
-            self::COMBINE_NOT => ($this->value & ~$fieldValue),
+        $fieldValue = match(gettype($field)) {
+            'integer'=>$field,
+            default=>
+                match(get_class($field)) {
+                    FieldInt::class=>$field->getAdjustedFieldValue(),
+                    FieldHex::class=>$field->getValue()
+                }
         };
-    }/**
+
+        $this->combinedValue=match ($operation) {
+            self::COMBINE_AND => ($this->getAdjustedFieldValue() & $fieldValue),
+            self::COMBINE_OR  => ($this->getAdjustedFieldValue() | $fieldValue),
+            self::COMBINE_XOR => ($this->getAdjustedFieldValue() ^ $fieldValue),
+            self::COMBINE_NOT => ($this->getAdjustedFieldValue() & ~$fieldValue),
+        };
+        return new self(
+            $this->bitLength,
+            $this->combinedValue,
+            $this->charLength,
+            0
+        );
+    }
+
+    public function getCombinedValue(): int
+    {
+        return $this->combinedValue ?? 0;
+    }
+
+    /**
      * Returns the number of bits needed to represent a given decimal
      * @param int $value the integer under test
      * @return int the number of bits needed to represent `$value`
- */
+    */
     protected function getBitCount(int $value): int
     {
-        return (int)floor(log($value, 2)-PHP_FLOAT_EPSILON) + 1;
+        return (int)floor(log($value, 2)) + 1;
     }
+
     /**
      * Return the value of the field after it has been adjusted by the bit offset
      * @return int
-    */
+     */
     public function getAdjustedFieldValue(): int
     {
-        return $this->value << $this->bitOffset;
+        return (
+            $this->offsetDirection==self::OFFSET_RIGHT
+                ? ($this->getValue() >> $this->bitOffset)
+                : ($this->getValue() << $this->bitOffset)
+            )
+            & $this->maxIntValue($this->bitLength);
     }/**
      * Returns the number of hexadecimal characters needed to represent a given decimal
      * @param int $value the decimal under test
@@ -161,6 +184,12 @@ class FieldInt extends Field implements FieldIntApi
     }
     public function getValue(): int
     {
+        if($this->hasLink()){
+            $this->value=$this->linkedField->getValue();
+        }
+        if($this->hasProvider()){
+            $this->value=$this->provider->getData();
+        }
         return $this->value;
     }
 
@@ -190,8 +219,7 @@ class FieldInt extends Field implements FieldIntApi
                 $this->getTransformer(self::XFMR_HEX_TO_INT)(),
                 $this->charLength,
                 $this->bitOffset,
-                null,
-                $this->provider ?? null
+                $this->offsetDirection
             );
         }
 
@@ -216,6 +244,17 @@ class FieldInt extends Field implements FieldIntApi
             default=>parent::getTransformer(self::XFMR)
         };
 
+    }
+    public function __toString(): string
+    {
+        return str_pad(
+            dechex(
+                $this->getAdjustedFieldValue()
+            ),
+            $this->charLength,
+            '0',
+            STR_PAD_LEFT
+        );
     }
 
 }

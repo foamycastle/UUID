@@ -1,10 +1,11 @@
 <?php
 
 namespace Foamycastle\UUID\Field;
+use Foamycastle\UUID\Field;
+use Stringable;
 
-interface FieldIntApi
+interface FieldIntApi extends Stringable
 {
-
     /**
      * @return bool TRUE if the field has a bit-offset property set
      */
@@ -28,6 +29,7 @@ interface FieldIntApi
 
     /**
      * Return the value of the field after it has been adjusted by the bit offset
+     * @param int $offsetDirection
      * @return int
      */
     public function getAdjustedFieldValue(): int;
@@ -37,7 +39,13 @@ interface FieldIntApi
      * @param int $operation a class constant that specifies which operation should be performed on the two values
      * @return int|null the result of the operation or null if the operation could not be performed.
      */
-    public function getCombinedValue(int $operation): int|null;
+    public function combineWith(Field|int $field,int $operation): self;
+
+    /**
+     * Return the combined value
+     * @return int
+     */
+    public function getCombinedValue():int;
 
     /**
      * Return the maximum decimal value a number of binary bits may represent
