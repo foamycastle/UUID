@@ -25,7 +25,7 @@ class GregorianTime extends TimeProvider
      */
     public function __invoke(...$args): static
     {
-        return new self();
+        return new self($args[0] ?? 0);
     }
 
     public function getData(): int
