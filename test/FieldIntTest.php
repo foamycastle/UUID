@@ -75,7 +75,7 @@ class FieldIntTest extends TestCase
         //$fieldInt will reference $fieldIntToo
         $fieldInt->setLink($fieldIntToo);
 
-        $value = $fieldInt->combineWith(FieldInt::COMBINE_OR);
+        $value = $fieldInt->combineWith($fieldIntToo,FieldInt::COMBINE_OR);
         $this->assertEquals(12206, $value);
     }
 
