@@ -12,12 +12,10 @@ class GregorianTime extends TimeProvider
      */
     public function __construct(public readonly int $version=1)
     {
-        $this->key = $this->version==1
+        $key=$this->version==1
             ? ProviderKey::GREGOR_V1
             : ProviderKey::GREGOR_V6;
-        if(!Provider::HasKey($this->key->name)) {
-            $this->register();
-        }
+        parent::__construct($key);
         $this->refreshData();
     }
 

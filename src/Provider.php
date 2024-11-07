@@ -24,7 +24,9 @@ abstract class Provider implements ProviderApi
      */
     protected function register():void
     {
-        Provider::Add($this->key,$this);
+        if(!Provider::HasKey($this->key->name)) {
+            Provider::Add($this->key, $this);
+        }
     }
     protected function unregister():void
     {

@@ -6,7 +6,10 @@ use Foamycastle\UUID\Provider;
 
 abstract class TimeProvider extends Provider implements TimeProviderApi
 {
-
+    protected function __construct(ProviderKey $key){
+        $this->key = $key;
+        $this->register();
+    }
     /**
      * @var int Contains the time value expressed as integer
      */
