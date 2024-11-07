@@ -12,4 +12,5 @@ interface FieldHexApi extends \Stringable
      */
     function pad(bool $pad): static;
 
+
 }
