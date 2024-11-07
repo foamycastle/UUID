@@ -15,9 +15,6 @@ abstract class TimeProvider extends Provider implements TimeProviderApi
      */
     protected int $time;
 
-    protected ProviderKey $key;
-
-
     public function getTimeValue(): int
     {
         return $this->time;
