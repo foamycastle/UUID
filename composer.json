@@ -11,6 +11,7 @@
   ],
   "require": {
     "php": "^8.3",
+    "ext-apcu": "*",
     "foamycastle/provision": "@dev",
     "foamycastle/validation": "@dev"
   },
