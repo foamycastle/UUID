@@ -2,8 +2,19 @@
 
 namespace Foamycastle\UUID;
 
-interface FieldApi
+interface FieldApi extends \Stringable
 {
+
+    /**
+     * Return the value contained in the class as an integer
+     * @return int
+     */
+    function getValue():int;
+    /**
+     * Indicates whether there is an active link with another field's value
+     * @return bool
+     */
+    function hasLink():bool;
     /**
      * Set a link between two fields
      * @param Field $field
@@ -12,24 +23,41 @@ interface FieldApi
     function setLink(Field $field):static;
 
     /**
-     * Set the data provider property
+     * Returns the reference to the linked field
+     * @return Field|null
+     */
+    function getLink():?Field;
+
+    /**
+     * Removes the link to the referenced field
+     * @return $this
+     */
+    function unsetLink():static;
+
+    /**
+     * Indicates the provider property has been set
+     * @return bool
+     */
+    function hasProvider():bool;
+
+    /**
+     * Returns the reference to the provider instance
+     * @return Provider|null
+     */
+    function getProvider():?Provider;
+
+    /**
+     * Set the data provider instance
      * @param Provider $provider
      * @return $this
      */
     function setProvider(Provider $provider):static;
 
     /**
-     * Set the provider key
-     * @param string $key The provider key used to access a specific part of a provider's data
+     * Removes the reference to the data provider
      * @return $this
      */
-    function setProviderKey(string $key):static;
-
-    /**
-     * Pulls data from the provider object using the $providerKey
-     * @return $this
-     */
-    function readProvider():static;
+    function unsetProvider():static;
 
     /**
      * Import a value from another field and transform it.  If the field link property has been set, that field value is read and assumed into this field

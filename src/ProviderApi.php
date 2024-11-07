@@ -2,19 +2,27 @@
 
 namespace Foamycastle\UUID;
 
+use Foamycastle\UUID\Provider\ProviderKey;
+
 interface ProviderApi
 {
 
     /**
      * Return data from the provider engine
-     * @param string $key specifies which piece of data will be provided
      * @return mixed the data
      */
-    public function getData(string $key):mixed;
+    public function getData():mixed;
 
     /**
      * Perform the logic of updating the provider's data
-     * @return self
+     * @return static
      */
-    public function refreshData(): self;
+    public function refreshData(): static;
+
+    /**
+     * Verifies that the current list of loaded providers contains a provider known by a key
+     * @param string $key
+     * @return bool
+     */
+    public static function hasKey(string $key):bool;
 }

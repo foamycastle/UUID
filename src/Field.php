@@ -32,39 +32,53 @@ abstract class Field implements FieldApi
     /**
      * @var Provider|null A provider class that provides the field with data.
      */
-    protected ?Provider $provider;
+    protected ?Provider $provider=null;
 
-    /**
-     * @var string An identifier that is used to read specific data from the provider. If the `$provider` property is set, a provider key must be specified.
-     */
-    protected string $providerKey;
+    public function getLink(): ?Field
+    {
+        return $this->linkedField ?? null;
+    }
+    public function hasLink(): bool
+    {
+        return isset($this->linkedField);
+    }
 
     public function setLink(Field $field): static
     {
         $this->linkedField = $field;
         return $this;
     }
-    public function setProvider(Provider $provider): static
+    public function unsetLink(): static
     {
-        $this->provider = $provider;
-        return $this;
-    }
-    public function setProviderKey(string $key): static
-    {
-        $this->providerKey = $key;
-        return $this;
-    }
-    public function setCharLength(int $length): static
-    {
-        $this->charLength = $length;
+        $this->linkedField = null;
         return $this;
     }
 
-    public function readProvider(): static
+    public function setProvider(Provider $provider): static
     {
-        if(isset($this->providerKey) && isset($this->provider)) {
-            $this->value = $this->provider->getData($this->providerKey);
-        }
+        $this->provider = $provider;
+        $this->value = $provider->getData();
+        return $this;
+    }
+
+    public function unsetProvider(): static
+    {
+        $this->provider = null;
+        return $this;
+    }
+    public function hasProvider(): bool
+    {
+        return isset($this->provider);
+    }
+
+    public function getProvider(): ?Provider
+    {
+        return $this->provider ?? null;
+    }
+
+    public function setCharLength(int $length): static
+    {
+        $this->charLength = $length;
         return $this;
     }
 
