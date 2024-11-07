@@ -9,10 +9,25 @@ class CounterProvider extends Provider implements CounterProviderApi {
      * @var int The current value of the counter
      */
     protected int $count;
+    
+    /**
+     * @var int The value by which the counter will increment
+     */
     protected int $incValue;
+
+    /**
+     * @var int The counter's minimum value
+     */
     protected int $minValue;
+
+    /**
+     * @var int The counter's maximum value
+     */
     protected int $maxValue;
 
+    /**
+     * Create an instance of a counter provider
+     */
     protected function __construct(
         int $minValue,
         int $maxValue,
@@ -23,6 +38,10 @@ class CounterProvider extends Provider implements CounterProviderApi {
         $this->incValue = $incValue;
         $this->minValue = $minValue;
         $this->maxValue = $maxValue;
+
+        /*
+        Register this provider with the static caller
+         */
         $this->register();
     }
 
@@ -31,16 +50,19 @@ class CounterProvider extends Provider implements CounterProviderApi {
         $this->count = $this->minValue ?? 0;
         return $this;
     }
+
     public function setMax(int $max): static
     {
         $this->maxValue = $max;
         return $this;
     }
+
     public function setMin(int $min): static
     {
         $this->minValue = $min;
         return $this;
     }
+
     public function setIncrement(int $increment): static
     {
         $this->incValue = $increment;
@@ -63,6 +85,7 @@ class CounterProvider extends Provider implements CounterProviderApi {
     {
         return $this->count ?? 0;
     }
+
     public function atMax(): bool
     {
         if(!isset($this->count) || !isset($this->maxValue)) return false;
@@ -75,6 +98,7 @@ class CounterProvider extends Provider implements CounterProviderApi {
     }
 
     /**
+     * Return a new instance of the current object
      * @param $args array{0:int,1:int,2:int}|array{'minValue':int,'maxValue':int,'incValue':int}
      * @return $this
      */

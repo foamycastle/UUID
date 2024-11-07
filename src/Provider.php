@@ -8,7 +8,7 @@ abstract class Provider implements ProviderApi
 {
 
     /**
-     * Used to
+     * Path used to check if a provider class exists
      */
     private const PROVIDER_NS=__NAMESPACE__.'\\Provider\\';
 
@@ -18,6 +18,10 @@ abstract class Provider implements ProviderApi
      */
     public static array $activeProviders=[];
 
+    /**
+     * The key used to store the instance in the provider array
+     * @var ProviderKey 
+     */
     protected ProviderKey $key;
 
     /**
