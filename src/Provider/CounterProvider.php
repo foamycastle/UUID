@@ -40,7 +40,7 @@ class CounterProvider extends Provider implements CounterProviderApi {
         $this->maxValue = $maxValue;
 
         /*
-        Register this provider with the static caller
+        Register this provider with the static facade
          */
         $this->register();
     }
