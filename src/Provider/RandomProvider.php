@@ -83,12 +83,12 @@ class RandomProvider extends Provider
     /**
      * Ensure an integer representing the number of bits in a word is a value between 1 and 64
      * @param int $bitLength The integer to test
-     * @return int<1,60>
+     * @return int<1,self::MAX>
      */
     private function normalizeBitLength(int $bitLength): int
     {
-        if($bitLength > 60){
-            $bitLength = 60;
+        if($bitLength > MAX){
+            $bitLength = MAX;
         }
         if($bitLength <= 0){
             $bitLength = 1;
