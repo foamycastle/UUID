@@ -152,16 +152,6 @@ class FieldInt extends Field implements FieldIntApi
     }
 
     /**
-     * Returns the number of bits needed to represent a given decimal
-     * @param int $value the integer under test
-     * @return int the number of bits needed to represent `$value`
-    */
-    protected function getBitCount(int $value): int
-    {
-        return (int)floor(log($value, 2)) + 1;
-    }
-
-    /**
      * Return the value of the field after it has been adjusted by the bit offset
      * @return int
      */
