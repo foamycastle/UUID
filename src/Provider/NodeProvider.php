@@ -14,8 +14,10 @@ abstract class NodeProvider extends Provider implements NodeProviderApi
     protected array $nodes=[];
     protected bool $apcu=false;
 
-    public function __construct()
+    protected function __construct(ProviderKey $key)
     {
+        $this->key = $key;
+        $this->register();
         $this->apcu=apcu_enabled();
         $this->nodes=$this->apcu ? $this->getSystemNodes() : $this->parseCommandOutput();
     }

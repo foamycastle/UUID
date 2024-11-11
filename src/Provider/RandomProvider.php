@@ -19,6 +19,9 @@ class RandomProvider extends Provider
         protected int $bitLength = 48
     )
     {
+        $this->key=ProviderKey::RANDOM;
+        $this->register();
+
         $this->bitLength=$this->normalizeBitLength($this->bitLength);
 
         $this->randomMin=intval((2**($this->bitLength-1)));

@@ -35,6 +35,7 @@ class CounterProvider extends Provider implements CounterProviderApi {
     )
     {
         $this->key=ProviderKey::COUNTER;
+        $this->register();
         $this->incValue = $incValue;
         $this->minValue = $minValue;
         $this->maxValue = $maxValue;

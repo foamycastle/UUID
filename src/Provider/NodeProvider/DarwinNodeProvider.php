@@ -5,16 +5,16 @@ namespace Foamycastle\UUID\Provider\NodeProvider;
 use Foamycastle\UUID\Provider\NodeProvider;
 use Foamycastle\UUID\Provider\ProviderKey;
 
-class WinNodeProvider extends NodeProvider
+class DarwinNodeProvider extends NodeProvider
 {
     public function __construct()
     {
-        parent::__construct(ProviderKey::NODE_WIN);
+        parent::__construct(ProviderKey::NODE_DARWIN);
     }
 
     protected function shellCommand(): string
     {
-        return 'ipconfig /all 2>&1';
+        return 'ifconfig 2>&1';
     }
 
 }
