@@ -3,21 +3,19 @@
 namespace Foamycastle\UUID\Provider;
 
 use Foamycastle\UUID\Provider;
+use Foamycastle\UUID\ProviderApi;
 
-abstract class TimeProvider extends Provider implements TimeProviderApi
+abstract class TimeProvider extends Provider
 {
-    protected function __construct(ProviderKey $key){
-        $this->key = $key;
-        $this->register();
-    }
-    /**
-     * @var int Contains the time value expressed as integer
-     */
-    protected int $time;
-
-    public function getTimeValue(): int
+    public function refreshData(): ProviderApi
     {
-        return $this->time;
+        ['sec'=>$sec,'usec'=>$usec]=gettimeofday();
+        $randomUSec=rand(0,9);
+        $this->data=
+            ($sec*10000000)+
+            ($usec*10)+
+            $randomUSec;
+        return $this;
     }
 
 }

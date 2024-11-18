@@ -1,113 +1,44 @@
 <?php
 
 namespace Foamycastle\UUID\Provider;
+
 use Foamycastle\UUID\Provider;
+use Foamycastle\UUID\ProviderApi;
 
-class CounterProvider extends Provider implements CounterProviderApi {
-
-    /**
-     * @var int The current value of the counter
-     */
-    protected int $count;
-    
-    /**
-     * @var int The value by which the counter will increment
-     */
-    protected int $incValue;
-
-    /**
-     * @var int The counter's minimum value
-     */
-    protected int $minValue;
-
-    /**
-     * @var int The counter's maximum value
-     */
-    protected int $maxValue;
-
-    /**
-     * Create an instance of a counter provider
-     */
+class CounterProvider extends Provider
+{
     public function __construct(
-        int $minValue,
-        int $maxValue,
-        int $incValue,
+        protected int $min,
+        protected int $max,
+        protected int $inc=1
     )
     {
-        $this->key=ProviderKey::COUNTER;
-        $this->register();
-        $this->incValue = $incValue;
-        $this->minValue = $minValue;
-        $this->maxValue = $maxValue;
-
-        /*
-        Register this provider with the static facade
-         */
-        $this->register();
+        if($this->max<$this->min) $this->max=$this->min+$this->inc;
+        if($this->inc>($this->max-$this->min)) $this->inc=($this->max-$this->min);
+        parent::__construct();
     }
 
-    public function resetCount(): static
+    function refreshData(): \Foamycastle\UUID\ProviderApi
     {
-        $this->count = $this->minValue ?? 0;
+        if(!isset($this->data)){
+            $this->data=$this->min;
+            return $this;
+        }
+        if($this->data == $this->max) {
+            $this->data = $this->min;
+            return $this;
+        }
+        if($this->inc > ($this->max-$this->data)) {
+            $this->data = $this->max;
+            return $this;
+        }
+        $this->data+=$this->inc;
         return $this;
     }
 
-    public function setMax(int $max): static
+    public function atMax():bool
     {
-        $this->maxValue = $max;
-        return $this;
-    }
-
-    public function setMin(int $min): static
-    {
-        $this->minValue = $min;
-        return $this;
-    }
-
-    public function setIncrement(int $increment): static
-    {
-        $this->incValue = $increment;
-        return $this;
-    }
-
-    public function refreshData():static
-    {
-        if(!isset($this->incValue)) return $this;
-        $this->count =+ $this->incValue;
-        return $this;
-    }
-
-    public function getValue():int
-    {
-        return $this->count ?? 0;
-    }
-
-    public function getData():int
-    {
-        return $this->count ?? 0;
-    }
-
-    public function atMax(): bool
-    {
-        if(!isset($this->count) || !isset($this->maxValue)) return false;
-        return ($this->count)==($this->maxValue);
-    }
-
-    public function __toString(): string
-    {
-        return '';
-    }
-
-    /**
-     * Return a new instance of the current object
-     * @param $args array{0:int,1:int,2:int}|array{'minValue':int,'maxValue':int,'incValue':int}
-     * @return $this
-     */
-    public function __invoke(...$args): static
-    {
-        return new self(
-            ...$args
-        );
+        return $this->data==$this->max;
     }
 
 }
