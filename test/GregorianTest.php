@@ -4,12 +4,12 @@ namespace Foamycastle\UUID\Provider\TimeProvider;
 
 use PHPUnit\Framework\TestCase;
 
-class UnixTimeTest extends TestCase
+class GregorianTest extends TestCase
 {
 
     public function testRefreshData()
     {
-        $time=new UnixTime();
+        $time=new GregorianTime();
         $this->expectsOutput();
         echo $time->getData().PHP_EOL;
     }
