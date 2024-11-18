@@ -4,6 +4,9 @@ namespace Foamycastle\UUID;
 
 use Foamycastle\UUID\Provider\ProviderKey;
 
+/**
+ * @method GregorianTime
+ */
 abstract class Provider implements ProviderApi
 {
 
@@ -30,7 +33,7 @@ abstract class Provider implements ProviderApi
      */
     protected function register():void
     {
-        if(!Provider::HasKey($this->key->name)) {
+        if(!Provider::hasKey($this->key->name)) {
             Provider::Add($this->key, $this);
         }
     }
@@ -41,7 +44,7 @@ abstract class Provider implements ProviderApi
 
     abstract public function __invoke(...$args):static;
 
-    public static function HasKey(string $key):bool
+    public static function hasKey(string $key):bool
     {
         return isset(self::$activeProviders[$key]);
     }
@@ -53,7 +56,7 @@ abstract class Provider implements ProviderApi
 
     public static function Remove(ProviderKey $key):void
     {
-        if(self::HasKey($key->name)){
+        if(self::hasKey($key->name)){
             unset(self::$activeProviders[$key->name]);
         }
     }
@@ -81,9 +84,11 @@ abstract class Provider implements ProviderApi
                 : self::PROVIDER_NS.$subSpace.$providerName
         );
     }
+
+
     public static function __callStatic(string $name, array $arguments):Provider|null
     {
-        if(self::HasKey($name)){
+        if(self::hasKey($name)){
             return self::$activeProviders[$name](...$arguments);
         }
         if(self::Exists($name)){

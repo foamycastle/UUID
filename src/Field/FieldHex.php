@@ -3,123 +3,59 @@
 namespace Foamycastle\UUID\Field;
 
 use Foamycastle\UUID\Field;
+use Foamycastle\UUID\FieldApi;
+use Foamycastle\UUID\Provider;
 
-class FieldHex extends Field implements FieldHexApi
+class FieldHex extends Field
 {
-    public const XFMR_HEX_TO_INT='hexToInt';
-    /**
-     * Sets the default maximum field length
-     */
-    public const MAX_FIELD_LEN=16;
+    private const NOT_HEX_CHAR='/[^a-f0-9]+/i';
 
-    /**
-     * The character used to pad output strings
-     */
-    public const PAD_CHAR='0';
-
-    /**
-     * @var bool If TRUE, the output string will be padded with `$padChar` to the length specified in `$charLength`
-     */
-    protected bool $padOutput;
-
-    /**
-     * @var string The string of characters used to pad the output
-     */
-    protected string $padChar;
-
-
-    /**
-     * @param string $value
-     * @param int $charLength
-     * @param bool $padOutput
-     * @param string $padChar
-     */
     public function __construct(
-        string $value,
-        int $charLength=self::MAX_FIELD_LEN,
-        bool $padOutput = false,
-        string $padChar = self::PAD_CHAR
+        string|int|Field $value
     )
     {
-        /*
-         * validate the characters in the string as hexadecimal.  if the string contains
-         * non-hex characters, the value will be blank
-         */
-        $value = $this->hexStringValidation($value)
-            ? $value
-            : '';
-
-        /**
-         * If the value's length is longer than the specified character length,
-         * truncate it in a manner that preserves the LSBs of the hex value
-         */
-        $value = strlen($value)>$charLength
-            ? substr($value, -$charLength)
-            : $value;
-
-        //set object properties
-        $this->value = $value;
-        $this->charLength = $charLength;
-        $this->padOutput = $padOutput;
-        $this->padChar = $padChar;
-    }
-    private function hexStringValidation(string $hex):bool
-    {
-        return preg_match('/^[0-9a-fA-F]+$/i', $hex);
-    }
-    public function __toString(): string
-    {
-        /*
-         * If the $padchar property is true, perform the padding operation
-         */
-        $output=$this->padOutput
-            ? str_pad($this->value, $this->charLength, self::PAD_CHAR, STR_PAD_LEFT)
-            : $this->value;
-
-        return $output;
-    }
-
-
-    function mutateField(?Field $field=null): static
-    {
-        $field ??= $this->linkedField;
-        if($field instanceof FieldIntApi){
-            $convertedValue=dechex($field->value);
-            return new self(
-                $convertedValue,
-                strlen($convertedValue),
-                $this->padOutput,
-                $this->padChar
-            );
+        if(is_string($value)) {
+            //string is primitive, filter invalid characters
+            $value=preg_replace(self::NOT_HEX_CHAR, '', $value);
+            //if the input primitive is longer than 16 characters, take the final 16 characters
+            $value=strlen($value)>16
+                ? substr($value, -16)
+                : $value;
         }
-        return $this;
+        if(is_int($value)){
+            $value=dechex($value);
+        }
+        if($value instanceof FieldApi) {
+            //string is valid because it comes from the pack() function inside FieldInt constructor
+            $this->hexStringLength=$value->hexStringLength;
+            $this->bitLength=$value->bitLength;
+            $this->value=$value->value;
+            return;
+        }
+
+
+        //hex string lengths and associated bit lengths
+        $this->hexStringLength = strlen($value);
+        $this->bitLength = $this->hexStringLength*4;
+
+        //if the string is empty, fail
+        if($this->hexStringLength==0){
+            return;
+        }
+        $value = str_pad($value,16 , '0', STR_PAD_LEFT);
+        $value= pack('H*', $value);
+
+        $this->value=$value;
     }
 
-    function pad(bool $pad): static
+    function __invoke(int|string|FieldApi $value): FieldApi
     {
-        $this->padOutput = $pad;
-        return $this;
+        if(is_string($value)||($value instanceof FieldApi)) {
+            return new self($value);
+        }
+        return new FieldInt($value);
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function getTransformer(string $transformerKey): callable
-    {
-        return match($transformerKey) {
 
-            self::XFMR_HEX_TO_INT=>
-                function(){
-                    return hexdec($this->linkedField->value);
-                },
-            default=>
-                parent::getTransformer(self::XFMR)
-        };
-    }
-
-    function getValue(): int
-    {
-        return hexdec($this->pad(false));
-    }
 
 }

@@ -1,10 +1,17 @@
 <?php
 
 namespace Foamycastle\UUID\Provider;
+
 defined("CACHE_PREFIX")||define("CACHE_PREFIX", "nodeCache_");
 defined('CACHE_TTL')||define('CACHE_TTL', 86400);
 defined("REGEX_PARSE")||define("REGEX_PARSE", "/(?:[a-f0-9]{2}[\-\:]){5}[a-f0-9]{2}/i");
+
 use Foamycastle\UUID\Provider;
+use Foamycastle\UUID\Provider\NodeProvider\DarwinNodeProvider;
+use Foamycastle\UUID\Provider\NodeProvider\FreeBSDNodeProvider;
+use Foamycastle\UUID\Provider\NodeProvider\LinuxNodeProvider;
+use Foamycastle\UUID\Provider\NodeProvider\WinNodeProvider;
+use Foamycastle\UUID\ProviderApi;
 
 abstract class NodeProvider extends Provider implements NodeProviderApi
 {
@@ -93,5 +100,15 @@ abstract class NodeProvider extends Provider implements NodeProviderApi
     }
     protected abstract function shellCommand(): string;
 
+    public static function System():ProviderApi
+    {
+        $os=strtoupper(substr(PHP_OS,0,3));
+        return match ($os) {
+            'WIN' => new WinNodeProvider(),
+            'LIN' => new LinuxNodeProvider(),
+            'DAR' => new DarwinNodeProvider(),
+            'FRE' => new FreeBSDNodeProvider(),
+        };
+    }
 
 }

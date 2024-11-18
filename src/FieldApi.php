@@ -6,72 +6,72 @@ interface FieldApi extends \Stringable
 {
 
     /**
-     * Return the value contained in the class as an integer
+     * Reset the value of the field to `$value`
+     * @param mixed $value
+     * @return FieldApi
+     */
+    function __invoke(int|string|FieldApi $value): FieldApi;
+
+    /**
+     * Bitwise OR operation
+     * @param int|Field $value
+     * @return FieldApi
+     */
+    function orValue(int|Field $value): FieldApi;
+
+    /**
+     * Bitwise AND operation
+     * @param int|Field $value
+     * @return FieldApi
+     */
+    function andValue(int|Field $value): FieldApi;
+
+    /**
+     * Shift the bits of a value right
+     * @param int $bits
+     * @return FieldApi
+     */
+    function shiftRight(int $bits): FieldApi;
+
+    /**
+     * Shift the bits of a value left
+     * @param int $bits
+     * @return FieldApi
+     */
+    function shiftLeft(int $bits): FieldApi;
+
+    /**
+     * Export the field's value as an integer
      * @return int
      */
-    function getValue():int;
-    /**
-     * Indicates whether there is an active link with another field's value
-     * @return bool
-     */
-    function hasLink():bool;
-    /**
-     * Set a link between two fields
-     * @param Field $field
-     * @return self
-     */
-    function setLink(Field $field):static;
+    function toInt():int;
 
     /**
-     * Returns the reference to the linked field
-     * @return Field|null
+     * Export the field's value as a hex string
+     * @return string
      */
-    function getLink():?Field;
+    function toHex():string;
 
     /**
-     * Removes the link to the referenced field
-     * @return $this
+     * Triggers an update of the provider data
+     * @return void
      */
-    function unsetLink():static;
+    function refreshProvider():void;
 
     /**
-     * Indicates the provider property has been set
-     * @return bool
+     * Create a new instance of field from a primitive value
+     * @param mixed $value
+     * @return FieldApi
      */
-    function hasProvider():bool;
+    static function From(mixed $value):?FieldApi;
 
     /**
-     * Returns the reference to the provider instance
-     * @return Provider|null
+     * Create a new instance of field from the value of a provider
+     * @param ProviderApi $provider
+     * @param bool $refresh
+     * @return FieldApi
      */
-    function getProvider():?Provider;
-
-    /**
-     * Set the data provider instance
-     * @param Provider $provider
-     * @return $this
-     */
-    function setProvider(Provider $provider):static;
-
-    /**
-     * Removes the reference to the data provider
-     * @return $this
-     */
-    function unsetProvider():static;
-
-    /**
-     * Import a value from another field and transform it.  If the field link property has been set, that field value is read and assumed into this field
-     * @param Field|null $field If supplied, this field's value will be read and assumed into this field
-     * @return $this
-     */
-    function mutateField(?Field $field=null):static;
-
-    /**
-     * Sets the character length of the string output
-     * @param int $length
-     * @return $this
-     */
-    function setCharLength(int $length):static;
+    static function FromProvider(ProviderApi $provider, bool $refresh=false):?FieldApi;
 
 
 }

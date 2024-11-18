@@ -2,103 +2,131 @@
 
 namespace Foamycastle\UUID;
 
-abstract class Field implements FieldApi
+use Foamycastle\UUID\Field\FieldHex;
+use Foamycastle\UUID\Provider\NodeProviderApi;
+
+abstract class Field implements FieldErrorInterface, FieldApi
 {
 
     /**
-     * Constants prefixed with 'XFMR' are used in the ::getTransformer method as match statement keys to return callables
-     * as transformers. In order to define constants in this class or child classes, prefix it with 'XFMR' and let the value of
-     * that constant be a string
+     * Store error messages
+     * @var array<array{0:int,1:string}>
      */
-    public const XFMR='';
+    protected array $errorStack;
 
     /**
-     * @var mixed $value the value of the field.  For fields that are calculated, the value will be an int.
-     * For fields that are generated or retrieved from the system, the value will be converted to an int from a string.
+     * The field's current value
+     * @var mixed
      */
     protected mixed $value;
 
-    /**
-     * @var int  $charLength the length of the field in ASCII characters. A UUID can be composed of one field or many.  One field would need to be the entire length of the UUID, 32, while a component field would need to be less.  The minimum field length is 1.
-     */
-    protected int $charLength;
+    protected int $bitLength = 0;
+    protected int $hexStringLength = 0;
 
-    /**
-     * Each field contains a discrete value. The variant component of a UUID contains 2 bits and the 'counter' of a version 1 UUID contains 14 bits.  These fields are then combined to compose a 16-bit group of characters in a UUID string.  Instead of keeping these objects separate and then performing a bunch of extra operations to combine them, this property can 'link' the two fields, the variant field having a bit length of 16 and an offset of 14 means that the actual variant component can only be 2 bits long.  Couple that with a counter field that also has a bit-length of 16 but only uses 14 bits of the 16 bit word.  These two fields being linked can be combined into 1 16 bit word at the time of UUID string construction. <br><br>If this property contains a reference to another field, the value from the referenced field is read and combined with the value of this field.
-     * @var Field|null $linkedField
-     */
-    protected ?Field $linkedField;
+    protected ProviderApi $provider;
 
-    /**
-     * @var Provider|null A provider class that provides the field with data.
-     */
-    protected ?Provider $provider=null;
-
-    public function getLink(): ?Field
+    static function From(mixed $value): ?FieldApi
     {
-        return $this->linkedField ?? null;
-    }
-    public function hasLink(): bool
-    {
-        return isset($this->linkedField);
+        if (
+            !(
+                $value instanceof FieldApi ||
+                is_string($value) ||
+                is_int($value)
+            )) {
+            return null;
+        }
+
+        return new static($value);
     }
 
-    public function setLink(Field $field): static
+    static function FromProvider(ProviderApi $provider, bool $refresh=false): FieldApi
     {
-        $this->linkedField = $field;
-        return $this;
-    }
-    public function unsetLink(): static
-    {
-        $this->linkedField = null;
-        return $this;
+        if($provider instanceof NodeProviderApi) {
+            $data=$provider->getFirstNode();
+        }else{
+            $data=$provider->getData();
+        }
+        $newField=new static($data);
+        $newField->provider=$provider;
+        if($refresh){
+            $newField->provider->refreshData();
+        }
+        return $newField;
     }
 
-    public function setProvider(Provider $provider): static
+    function refreshProvider(): void
     {
-        $this->provider = $provider;
-        $this->value = $provider->getData();
-        return $this;
+        $this->provider->refreshData();
     }
 
-    public function unsetProvider(): static
+
+    function newError(int $code, string $message): void
     {
-        $this->provider = null;
-        return $this;
-    }
-    public function hasProvider(): bool
-    {
-        return isset($this->provider);
+        $this->errorStack[] = [$code,$message];
     }
 
-    public function getProvider(): ?Provider
+    function hasError(): bool
     {
-        return $this->provider ?? null;
+        return count($this->errorStack ?? [])>0;
     }
 
-    public function setCharLength(int $length): static
+    function getLastError(): array
     {
-        $this->charLength = $length;
-        return $this;
+        return end($this->errorStack);
     }
 
-    /**
-     * Returns a callable that transforms a foreign field's data into this field's type and value.
-     * Place anonymous functions within the match statement body. It is helpful to define class constants
-     * and use those as match keys for each of the callables. Inside the callable body, use the 'use' statement in the function
-     * declaration to gain access to the link field property to read the referenced field's value <br><br>
-     * <b>NOTE:</b> Do not call this base function. The function below should be overridden in child classes so that it may return
-     * transformers relevant to the child class.
-     *
-     * @param string<static::XFMR_*> $transformerKey
-     * @return callable The callable that is returned should return only the field's value after it has been transformed to a new datatype
-     */
-    protected function getTransformer(string $transformerKey): callable{
-        return match($transformerKey) {
-            default=>function(){
-                return null;
-            }
-        };
+    function getLastErrorMessage(): string
+    {
+        [$code,$message] = $this->getLastError();
+        return $message ?? '';
     }
+
+    function getLastErrorNumber(): int
+    {
+        [$code,$message] = $this->getLastError();
+        return $code ?? -1;
+    }
+
+    public function __toString(): string
+    {
+        return $this->toHex();
+    }
+
+    function orValue(int|Field $value): FieldApi
+    {
+        $field=($value instanceof Field) ? $value->value : $value;
+        $thisValue=$this->toInt();
+        return new static(($field|$thisValue));
+    }
+
+    function andValue(int|Field $value): FieldApi
+    {
+        $field=($value instanceof Field) ? $value->value : $value;
+        $thisValue=$this->toInt();
+        return new static(($field&$thisValue));
+    }
+
+    function shiftRight(int $bits): FieldApi
+    {
+        $thisValue=$this->toInt();
+        return new static($thisValue>>($bits));
+    }
+
+    function shiftLeft(int $bits): FieldApi
+    {
+        $thisValue=$this->toInt();
+        return new static($thisValue<<($bits));
+    }
+
+    function toHex(): string
+    {
+        return substr(unpack('H*', $this->value)[1], -$this->hexStringLength);
+    }
+
+    function toInt(): int
+    {
+        return unpack('J', $this->value)[1];
+    }
+
 
 }

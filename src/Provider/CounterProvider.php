@@ -28,7 +28,7 @@ class CounterProvider extends Provider implements CounterProviderApi {
     /**
      * Create an instance of a counter provider
      */
-    protected function __construct(
+    public function __construct(
         int $minValue,
         int $maxValue,
         int $incValue,
