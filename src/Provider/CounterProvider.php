@@ -5,7 +5,7 @@ namespace Foamycastle\UUID\Provider;
 use Foamycastle\UUID\Provider;
 use Foamycastle\UUID\ProviderApi;
 
-class CounterProvider extends Provider
+class CounterProvider extends Provider implements ProvidesInt
 {
     public function __construct(
         protected int $min,
@@ -35,10 +35,21 @@ class CounterProvider extends Provider
         $this->data+=$this->inc;
         return $this;
     }
+    public function reset():self
+    {
+        $this->data=$this->min;
+        return $this;
+    }
+
 
     public function atMax():bool
     {
         return $this->data==$this->max;
+    }
+
+    function toInt(): int
+    {
+        return $this->data;
     }
 
 }

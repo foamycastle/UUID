@@ -5,7 +5,7 @@ namespace Foamycastle\UUID\Provider;
 use Foamycastle\UUID\Provider;
 use Foamycastle\UUID\ProviderApi;
 
-abstract class TimeProvider extends Provider
+abstract class TimeProvider extends Provider implements ProvidesInt
 {
     public function refreshData(): ProviderApi
     {
@@ -17,5 +17,13 @@ abstract class TimeProvider extends Provider
             $randomUSec;
         return $this;
     }
+    function reset(): ProviderApi
+    {
+        return $this->refreshData();
+    }
 
+    function toInt(): int
+    {
+        return $this->data;
+    }
 }
