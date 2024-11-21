@@ -3,8 +3,10 @@
 namespace Foamycastle\UUID\Provider;
 
 use Foamycastle\UUID\Provider;
-use Foamycastle\UUID\ProviderApi;
 
+/**
+ * Parent class for all time providers
+ */
 abstract class TimeProvider extends Provider implements ProvidesInt
 {
     public function __construct()
@@ -13,12 +15,15 @@ abstract class TimeProvider extends Provider implements ProvidesInt
 
     public function refreshData(): static
     {
+        //read the system time. system time is on the order of microseconds
+        //this should be converted to 100-nanosecond intervals
+        //since the 100ns time interval is unavailable, randomize it
         ['sec'=>$sec,'usec'=>$usec]=gettimeofday();
-        $randomUSec=rand(0,9);
+        $randomNS=rand(0,9);
         $this->data=
-            ($sec*10000000)+
-            ($usec*10)+
-            $randomUSec;
+            ($sec*10000000)+    //seconds
+            ($usec*10)+         //microseconds
+            $randomNS;          //random sub-microsecond
         return $this;
     }
     function reset(): static
@@ -28,6 +33,6 @@ abstract class TimeProvider extends Provider implements ProvidesInt
 
     function toInt(): int
     {
-        return $this->data;
+        return $this->data ?? $this->reset()->toInt();
     }
 }

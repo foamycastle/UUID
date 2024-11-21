@@ -27,7 +27,7 @@ class HashProvider extends Provider implements ProvidesBinary, ProvidesHex
 
     function getBinary(): string
     {
-        return substr($this->data,0,16);
+        return substr($this->data ?? $this->refreshData()->data,0,16);
     }
 
     function reset(): static

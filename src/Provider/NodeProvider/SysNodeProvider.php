@@ -24,7 +24,7 @@ class SysNodeProvider extends NodeProvider implements ProvidesHex
     }
     public function toHex(): string
     {
-        return $this->data;
+        return $this->data ?? $this->refreshData()->data;
     }
 
     function refreshData(): static

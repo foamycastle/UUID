@@ -11,25 +11,7 @@ use Foamycastle\UUID\Provider\ProvidesInt;
 
 abstract class Field implements FieldApi,\Stringable
 {
-    public const string TIME_LO='time_lo';
-    public const string TIME_LOAV='time_low_and_version';
-    public const string TIME_MID='time_mid';
-    public const string TIME_HI='time_hi';
-    public const string TIME_HIAV='time_hi_and_version';
-    public const string TIME_NODE='system_node';
-    public const string TIME_VAR='sequential_counter_and_variant';
-    public const string RAN_VAR='random_gen_and_variant';
-    public const string RAN_NODE='random_gen_node_field';
-    public const string RAN_TIME_LO='randon_gen_time_low';
-    public const string RAN_TIME_MID='randon_gen_time_mid';
-    public const string RAN_TIME_HI='randon_gen_time_hi';
-    public const string HASH_VAR='hash_string_and_variant';
-    public const string HASH_NODE='hash_string_node_field';
-    public const string HASH_TIME_LO='hash_time_lo_field';
-    public const string HASH_TIME_MID='hash_time_mid_field';
-    public const string HASH_TIME_HI='hash_time_hi_field';
-
-        /**
+    /**
      * @var Provider|ProvidesHex|ProvidesInt provides a dynamic value instead of a static value
      */
     protected Provider|ProvidesHex|ProvidesInt $provider;

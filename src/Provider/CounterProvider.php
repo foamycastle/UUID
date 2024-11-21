@@ -48,7 +48,7 @@ class CounterProvider extends Provider implements ProvidesInt
 
     function toInt(): int
     {
-        return $this->data;
+        return $this->data ?? $this->reset()->data;
     }
 
 }
