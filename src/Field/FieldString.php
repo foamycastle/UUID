@@ -7,6 +7,11 @@ use Foamycastle\UUID\FieldApi;
 use Foamycastle\UUID\Provider\ProvidesHex;
 use Foamycastle\UUID\ProviderApi;
 
+/**
+ * Field object that reads string values from providers and transforms
+ * them into values used in UUID string
+ * @author Aaron Sollman <unclepong#@gmail.com>
+ */
 class FieldString extends Field implements FieldStringApi
 {
     private int $start;
@@ -18,10 +23,12 @@ class FieldString extends Field implements FieldStringApi
 
     public function getValue(int $padLength=0, string $padChar = '0'): mixed
     {
+        //if the startAt property is defined, read data from that location
         $outputValue = isset($this->start)
             ? substr($this->provider->toHex(),$this->start,$this->fieldLength)
             : substr($this->provider->toHex(),0,$this->fieldLength);
 
+        //ensure the length of the output value is compatible with the fieldLength property
         if($this->fieldLength!=0){
             if(strlen($outputValue)<$this->fieldLength) {
                 $outputValue = str_pad($outputValue, $this->fieldLength, $padChar, STR_PAD_LEFT);

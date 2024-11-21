@@ -8,6 +8,10 @@ use Foamycastle\UUID\Provider\ProvidesInt;
 use Foamycastle\UUID\Provider\RandomProvider;
 use Foamycastle\UUID\ProviderApi;
 
+/**
+ * Provides a random integer of a specified bit length to a field object
+ * @author Aaron Sollman <unclepong@gmail.com>
+ */
 class RandomWord extends RandomInt
 {
     public function __construct(private readonly int $bitLength)

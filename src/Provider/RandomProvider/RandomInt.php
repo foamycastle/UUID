@@ -8,6 +8,10 @@ use Foamycastle\UUID\Provider\ProvidesInt;
 use Foamycastle\UUID\Provider\RandomProvider;
 use Foamycastle\UUID\ProviderApi;
 
+/**
+ * Provide a random integer value to a field object. 
+ * @author Aaron Sollman
+ */
 class RandomInt extends RandomProvider implements ProvidesInt, ProvidesHex, ProvidesBinary
 {
     public function __construct(
@@ -31,6 +35,7 @@ class RandomInt extends RandomProvider implements ProvidesInt, ProvidesHex, Prov
 
     function getBinary(): string
     {
+        //pack the value of the integer into a binary string
         return pack("J",$this->data)[0];
     }
 

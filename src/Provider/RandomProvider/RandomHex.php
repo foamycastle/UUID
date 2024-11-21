@@ -7,6 +7,10 @@ use Foamycastle\UUID\Provider\ProvidesHex;
 use Foamycastle\UUID\Provider\RandomProvider;
 use Foamycastle\UUID\ProviderApi;
 
+/**
+ * Provide random hexadecimal string of a specified length
+ * @author Aaron Sollman <unclepong@gmail.com>
+ */
 class RandomHex extends RandomProvider implements ProvidesHex, ProvidesBinary
 {
     public function __construct(private readonly int $hexLength)

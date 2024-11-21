@@ -5,6 +5,9 @@ namespace Foamycastle\UUID\Provider;
 use Foamycastle\UUID\Provider;
 use Foamycastle\UUID\ProviderApi;
 
+/**
+ * Provides a sequential counter for version 1 UUID strings
+ */
 class CounterProvider extends Provider implements ProvidesInt
 {
     public function __construct(
@@ -34,6 +37,10 @@ class CounterProvider extends Provider implements ProvidesInt
         $this->data+=$this->inc;
         return $this;
     }
+
+    /**
+     * Reset the counter's value to minimum
+     */
     public function reset():static
     {
         $this->data=$this->min;
@@ -41,6 +48,9 @@ class CounterProvider extends Provider implements ProvidesInt
     }
 
 
+    /**
+     * Indicates if the counter has reached its maximujm value
+     */
     public function atMax():bool
     {
         return $this->data==$this->max;

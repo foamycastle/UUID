@@ -5,6 +5,11 @@ namespace Foamycastle\UUID\Provider;
 use Foamycastle\UUID\Provider;
 use Foamycastle\UUID\ProviderApi;
 
+/**
+ * Provides either a MD5 hash string or a SHA1 hash string to fields
+ * for use in UUID strings
+ * @author Aaron Sollman <unclepong@gmail.com>
+ */
 class HashProvider extends Provider implements ProvidesBinary, ProvidesHex
 {
     public function __construct(

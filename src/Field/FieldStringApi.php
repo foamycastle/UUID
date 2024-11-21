@@ -4,6 +4,10 @@ namespace Foamycastle\UUID\Field;
 
 use Foamycastle\UUID\FieldApi;
 
+/**
+ * Public API for FieldString objects
+ * @author Aaron Sollman <unclepong@gmail.com>
+ */
 interface FieldStringApi
 {
 

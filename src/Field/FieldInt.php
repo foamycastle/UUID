@@ -7,6 +7,11 @@ use Foamycastle\UUID\FieldApi;
 use Foamycastle\UUID\Provider\ProvidesInt;
 use Foamycastle\UUID\ProviderApi;
 
+/**
+ * A field object that reads an integer value from provider and transforms it into
+ * a value usable in a UUID string
+ * @author Aaron Sollman <unclepong@gmail.com>
+ */
 class FieldInt extends Field implements FieldIntApi
 {
     protected function __construct(ProviderApi|ProvidesInt $provider)
@@ -20,6 +25,13 @@ class FieldInt extends Field implements FieldIntApi
         return $this->provider->toInt();
     }
 
+    /**
+     * Return the value of the field in hexadecimal characters to the specified length
+     * of the $fieldLength property
+     * @param int $padLength
+     * @param string $padChar
+     * @return string The formatted field value
+     */
     protected function toHex(int $padLength=0, string $padChar = '0'): string
     {
         $outputValue = dechex($this->processQueue());
@@ -42,7 +54,9 @@ class FieldInt extends Field implements FieldIntApi
     {
         $this->appendProcessQueue(
             function (int $value) use($variant){
-                return $value|($variant<<14);
+                $bitsNeeded=(int)floor(log($variant,2))+1;
+                $charValue=$value & ((2**(16-$bitsNeeded))-1);
+                return ($variant<<(16-$bitsNeeded)) | $charValue;
             }
         );
         return $this;

@@ -9,17 +9,25 @@ use Foamycastle\UUID\Field\FieldStringApi;
 use Foamycastle\UUID\Provider\ProvidesHex;
 use Foamycastle\UUID\Provider\ProvidesInt;
 
+/**
+ * Parent class for field objects.  Field objects use a unit-of-work pattern
+ * to perform the operations necessary to process data ingested from Provider objects
+ */
 abstract class Field implements FieldApi,\Stringable
 {
     /**
-     * @var Provider|ProvidesHex|ProvidesInt provides a dynamic value instead of a static value
+     * @var Provider|ProvidesHex|ProvidesInt provides data to field
      */
     protected Provider|ProvidesHex|ProvidesInt $provider;
 
     /**
-     * @var callable[] A queue of operations to perform before output
+     * @var callable[] A queue of operations to process data
      */
     protected array $processQueue;
+
+    /**
+     * @var int the length of the field in hexadecimal characters
+     */
     protected int $fieldLength;
 
     protected function __construct()
@@ -27,20 +35,39 @@ abstract class Field implements FieldApi,\Stringable
         $this->processQueue=[];
     }
 
+    /**
+     * Set the field length
+     * @param int $fieldLength the length of the field in hexadecimal characters
+     * @return static
+     */
     public function length(int $fieldLength): static
     {
         $this->fieldLength=$fieldLength;
         return $this;
     }
 
+    /**
+     * Add a unit of work the process queue
+     * @param callable $process The operation to be perform on the data
+     */
     protected function appendProcessQueue(callable $process):void
     {
         $this->processQueue[] = $process;
     }
+
+    /**
+     * Prepend a unit of work to the queue
+     * @param callable $process The operation to be perform on the data
+     */
     protected function prependProcessQueue(callable $process):void
     {
         array_unshift($this->processQueue,$process);
     }
+
+    /**
+     * Process the units of work in the order they were added
+     * @return mixed the processed data
+     */
     protected function processQueue():mixed
     {
         $value=$this->getValue();
@@ -53,6 +80,7 @@ abstract class Field implements FieldApi,\Stringable
     /**
      * Set the provider
      * @param Provider $provider
+     * @return void
      */
     protected function setProvider(ProviderApi $provider): void
     {
@@ -68,18 +96,25 @@ abstract class Field implements FieldApi,\Stringable
         $this->provider->refreshData();
     }
 
+    /**
+     * Trigger a state reset of the data provider
+     * @return void
+     */
     public function resetProvider():void
     {
         $this->provider->reset();
     }
 
     /**
-     * @param class-string|ProviderApi $provider
-     * @param ...$args
+     * Create a new field object using an estblished provider object
+     * @param class-string|ProviderApi $provider The provider object or the class string to instantiatiate the provider
+     * @param ...$args Any arguments that are needed to instantiatiate the provider object
      * @return (FieldIntApi&FieldApi)|(FieldApi&FieldStringApi)|null
      */
     public static function FromProvider(string|ProviderApi $provider, ...$args): null|(FieldApi&FieldStringApi)|(FieldApi&FieldIntApi)
     {
+        //class strings are accepted as are Provider objects.
+        //If a class string is provided, attempt to instantiate the Provider
         if(is_string($provider)){
             if(class_exists($provider)) {
                 /** @var ProviderApi $provider */
@@ -100,6 +135,7 @@ abstract class Field implements FieldApi,\Stringable
     }
 
     /**
+     * Trigger a refresh of all provider objects specified
      * @param ...$providers FieldApi
      * @return void
      */

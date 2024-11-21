@@ -6,6 +6,7 @@ use Foamycastle\UUID\Provider;
 
 /**
  * Parent class for all time providers
+ * @author Aaron Sollman <unclepong@gmail.com>
  */
 abstract class TimeProvider extends Provider implements ProvidesInt
 {
