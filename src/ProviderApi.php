@@ -4,7 +4,7 @@ namespace Foamycastle\UUID;
 
 interface ProviderApi
 {
-    function refreshData():self;
-    function reset():self;
+    function refreshData():static;
+    function reset():static;
 
 }

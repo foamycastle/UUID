@@ -7,7 +7,11 @@ use Foamycastle\UUID\ProviderApi;
 
 abstract class TimeProvider extends Provider implements ProvidesInt
 {
-    public function refreshData(): ProviderApi
+    public function __construct()
+    {
+    }
+
+    public function refreshData(): static
     {
         ['sec'=>$sec,'usec'=>$usec]=gettimeofday();
         $randomUSec=rand(0,9);
@@ -17,7 +21,7 @@ abstract class TimeProvider extends Provider implements ProvidesInt
             $randomUSec;
         return $this;
     }
-    function reset(): ProviderApi
+    function reset(): static
     {
         return $this->refreshData();
     }

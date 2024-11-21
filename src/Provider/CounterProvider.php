@@ -15,10 +15,9 @@ class CounterProvider extends Provider implements ProvidesInt
     {
         if($this->max<$this->min) $this->max=$this->min+$this->inc;
         if($this->inc>($this->max-$this->min)) $this->inc=($this->max-$this->min);
-        parent::__construct();
     }
 
-    function refreshData(): \Foamycastle\UUID\ProviderApi
+    function refreshData(): static
     {
         if(!isset($this->data)){
             $this->data=$this->min;
@@ -35,7 +34,7 @@ class CounterProvider extends Provider implements ProvidesInt
         $this->data+=$this->inc;
         return $this;
     }
-    public function reset():self
+    public function reset():static
     {
         $this->data=$this->min;
         return $this;

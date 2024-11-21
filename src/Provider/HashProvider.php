@@ -13,14 +13,15 @@ class HashProvider extends Provider implements ProvidesBinary, ProvidesHex
         private readonly int $version
     )
     {
+
+    }
+
+    function refreshData(): static
+    {
         $this->data=match ($this->version){
             3=>md5($this->namespace.$this->key,true),
             5=>sha1($this->namespace.$this->key,true)
         };
-    }
-
-    function refreshData(): ProviderApi
-    {
         return $this;
     }
 
@@ -29,7 +30,7 @@ class HashProvider extends Provider implements ProvidesBinary, ProvidesHex
         return substr($this->data,0,16);
     }
 
-    function reset(): ProviderApi
+    function reset(): static
     {
         return $this;
     }

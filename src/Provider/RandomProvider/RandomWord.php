@@ -10,7 +10,7 @@ use Foamycastle\UUID\ProviderApi;
 
 class RandomWord extends RandomInt
 {
-    protected function __construct(private readonly int $bitLength)
+    public function __construct(private readonly int $bitLength)
     {
         if($this->bitLength==64){
             $max=(PHP_INT_MAX | PHP_INT_MIN);

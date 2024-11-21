@@ -9,19 +9,19 @@ use Foamycastle\UUID\ProviderApi;
 
 class RandomHex extends RandomProvider implements ProvidesHex, ProvidesBinary
 {
-    protected function __construct(private readonly int $hexLength)
+    public function __construct(private readonly int $hexLength)
     {
         parent::__construct();
     }
 
-    function refreshData(): \Foamycastle\UUID\ProviderApi
+    function refreshData(): static
     {
         $randomLength=intval($this->hexLength/2) + (($this->hexLength % 2)==1);
         $this->data = random_bytes($randomLength);
         return $this;
     }
 
-    function reset(): \Foamycastle\UUID\ProviderApi
+    function reset(): static
     {
         return $this->refreshData();
     }

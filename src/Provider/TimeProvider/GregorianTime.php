@@ -8,8 +8,8 @@ use Foamycastle\UUID\ProviderApi;
 
 class GregorianTime extends TimeProvider implements ProvidesInt
 {
-    private const TIME_CONSTANT=122192928000000000;
-    function refreshData(): ProviderApi
+    private const int TIME_CONSTANT=122192928000000000;
+    function refreshData(): static
     {
         parent::refreshData();
         $this->data+=self::TIME_CONSTANT;

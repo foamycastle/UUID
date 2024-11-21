@@ -9,7 +9,7 @@ abstract class RandomProvider extends Provider
 {
     protected function __construct()
     {
-        parent::__construct();
+        $this->refreshData();
     }
 
 }

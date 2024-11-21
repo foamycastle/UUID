@@ -3,6 +3,10 @@
 namespace Foamycastle\UUID;
 
 use Foamycastle\UUID\Provider\CounterProvider;
+use Foamycastle\UUID\Provider\HashProvider;
+use Foamycastle\UUID\Provider\NodeProvider\StaticNodeProvider;
+use Foamycastle\UUID\Provider\NodeProvider\SysNodeProvider;
+use Foamycastle\UUID\Provider\ProvidesInt;
 use Foamycastle\UUID\Provider\RandomProvider\RandomHex;
 use Foamycastle\UUID\Provider\RandomProvider\RandomInt;
 use Foamycastle\UUID\Provider\RandomProvider\RandomWord;
@@ -12,10 +16,6 @@ use Foamycastle\UUID\Provider\TimeProvider\UnixTime;
 abstract class Provider implements ProviderApi
 {
     protected mixed $data=null;
-    public function __construct()
-    {
-        $this->refreshData();
-    }
 
     public static function RandomInt(int $min,$max):RandomInt
     {
@@ -45,5 +45,25 @@ abstract class Provider implements ProviderApi
     public static function UnixTime():UnixTime
     {
         return new UnixTime();
+    }
+
+    public static function HashMD5(string $namespace, string $name):HashProvider
+    {
+        return new HashProvider($namespace,$name,3);
+    }
+
+    public static function HashSHA1(string $namespace, string $name):HashProvider
+    {
+        return new HashProvider($namespace,$name,3);
+    }
+
+    public static function SystemNode():SysNodeProvider
+    {
+        return new SysNodeProvider();
+    }
+
+    public static function StaticNode(string $node):StaticNodeProvider
+    {
+        return new StaticNodeProvider($node);
     }
 }

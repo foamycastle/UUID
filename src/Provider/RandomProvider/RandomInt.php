@@ -10,7 +10,7 @@ use Foamycastle\UUID\ProviderApi;
 
 class RandomInt extends RandomProvider implements ProvidesInt, ProvidesHex, ProvidesBinary
 {
-    protected function __construct(
+    public function __construct(
         private readonly int $min,
         private readonly int $max
     )
@@ -18,13 +18,13 @@ class RandomInt extends RandomProvider implements ProvidesInt, ProvidesHex, Prov
         parent::__construct();
     }
 
-    function refreshData(): \Foamycastle\UUID\ProviderApi
+    function refreshData(): static
     {
         $this->data=random_int($this->min,$this->max);
         return $this;
     }
 
-    function reset(): ProviderApi
+    function reset(): static
     {
         return $this;
     }
