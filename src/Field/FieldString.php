@@ -47,9 +47,9 @@ class FieldString extends Field implements FieldStringApi
     {
         $this->appendProcessQueue(
             function (string $value) use ($variant){
-                $charValue=hexdec($value[0]);
-                $variantChar=dechex($variant | $charValue);
-                return $variantChar.substr($value,1);
+                $bitsNeeded=(int)floor(log($variant,2))+1;
+                $charValue=hexdec($value) & ((2**(16-$bitsNeeded))-1);
+                return dechex(($variant<<(16-$bitsNeeded)) | $charValue);
             }
         );
         return $this;

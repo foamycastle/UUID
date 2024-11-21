@@ -3,6 +3,7 @@
 namespace Foamycastle\UUID;
 
 use Foamycastle\UUID\Builder\UUIDVersion1;
+use Foamycastle\UUID\Builder\UUIDVersion3;
 use Foamycastle\UUID\Field\FieldIntApi;
 use Foamycastle\UUID\Field\FieldKey;
 use Foamycastle\UUID\Field\FieldStringApi;
@@ -60,10 +61,20 @@ abstract class UUIDBuilder implements ProvidesBinary, \Stringable
     {
         return hex2bin(join('',$this->fields));
     }
+    function refresh(): static
+    {
+        Field::RefreshProviders(...array_values($this->providers));
+        return $this;
+    }
 
     public static function Version1(?string $node=null):UUIDVersion1
     {
         return new UUIDVersion1($node);
+    }
+
+    public static function Version3(string $namespace, string $name)
+    {
+        return new UUIDVersion3($namespace,$name);
     }
 
 }

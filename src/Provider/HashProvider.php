@@ -37,7 +37,7 @@ class HashProvider extends Provider implements ProvidesBinary, ProvidesHex
 
     function toHex(): string
     {
-        return substr(bin2hex($this->data),0,32);
+        return substr(bin2hex($this->getBinary()),0,32);
     }
 
 }

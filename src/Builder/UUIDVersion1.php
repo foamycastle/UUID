@@ -6,7 +6,7 @@ use Foamycastle\UUID\Field;
 use Foamycastle\UUID\Field\FieldKey;
 use Foamycastle\UUID\Provider\ProviderKey;
 use Foamycastle\UUID\UUIDBuilder;
-use Foamycastle\UUID\UUIDInterface;
+use Foamycastle\UUID\Batchable;
 
 /**
  * UUID Type 1: Gregorian Time-based.
@@ -14,7 +14,7 @@ use Foamycastle\UUID\UUIDInterface;
  * @author Aaron Sollman<unclepong@gmail.com>
  *
  */
-class UUIDVersion1 extends UUIDBuilder implements UUIDInterface
+class UUIDVersion1 extends UUIDBuilder implements Batchable
 {
     protected function __construct(?string $staticNode=null)
     {
@@ -82,15 +82,9 @@ class UUIDVersion1 extends UUIDBuilder implements UUIDInterface
             ->length(12);
     }
 
-    function refresh(): static
-    {
-        Field::RefreshProviders(...array_values($this->providers));
-        return $this;
-    }
-
     function batch(int $count): iterable
     {
-        // TODO: Implement batch() method.
+        return [];
     }
 
 }
