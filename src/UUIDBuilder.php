@@ -89,4 +89,9 @@ abstract class UUIDBuilder implements ProvidesBinary, Stringable
         return new UUIDVersion3($namespace,$name);
     }
 
+    public static function Version4():UUIDVersion4
+    {
+        return new UUIDVersion4();
+    }
+
 }
