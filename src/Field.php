@@ -110,7 +110,7 @@ abstract class Field implements FieldApi, Stringable
     /**
      * Create a new field object using an established provider object
      * @param class-string|ProviderApi $provider The provider object or the class string to instantiate the provider
-     * @param ...$args Any arguments that are needed to instantiate the provider object
+     * @param mixed ...$args Any arguments that are needed to instantiate the provider object
      * @return (FieldIntApi&FieldApi)|(FieldApi&FieldStringApi)|null
      */
     public static function FromProvider(string|ProviderApi|ProviderKey $provider, ...$args): null|(FieldApi&FieldStringApi)|(FieldApi&FieldIntApi)
