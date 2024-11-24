@@ -16,33 +16,44 @@ class UUIDVersion4 extends UUIDBuilder
     protected function __construct()
     {
         parent::__construct(4);
+
+        $this->registerProvider(ProviderKey::RandomHex,32);
+
         $this->registerField(
             FieldKey::RAN_TIME_LO,
-            ProviderKey::RandomWord,
-            32
-        );
+            ProviderKey::RandomHex
+        )
+            ->length(8);
+
         $this->registerField(
             FieldKey::RAN_TIME_MID,
-            ProviderKey::RandomWord,
-            16
-        );
+            ProviderKey::RandomHex
+        )
+            ->length(4)
+            ->startAt(8);
+
         $this->registerField(
             FieldKey::RAN_TIME_HI,
-            ProviderKey::RandomWord,
-            16
+            ProviderKey::RandomHex
         )
+            ->length(4)
+            ->startAt(12)
             ->applyVersion(4);
+
         $this->registerField(
             FieldKey::RAN_VAR,
-            ProviderKey::RandomWord,
-            16
+            ProviderKey::RandomHex
         )
+            ->length(4)
+            ->startAt(16)
             ->applyVariant();
+
         $this->registerField(
             FieldKey::RAN_NODE,
-            ProviderKey::RandomWord,
-            48
-        );
+            ProviderKey::RandomHex
+        )
+            ->length(12)
+            ->startAt(20);
     }
     public function __toString(): string
     {
