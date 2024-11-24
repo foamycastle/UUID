@@ -2,7 +2,9 @@
 
 namespace Foamycastle\UUID;
 
-interface Batchable extends \Stringable
+use Stringable;
+
+interface Batchable extends Stringable
 {
 
     /**

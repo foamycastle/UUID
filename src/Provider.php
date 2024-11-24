@@ -6,7 +6,6 @@ use Foamycastle\UUID\Provider\CounterProvider;
 use Foamycastle\UUID\Provider\HashProvider;
 use Foamycastle\UUID\Provider\NodeProvider\StaticNodeProvider;
 use Foamycastle\UUID\Provider\NodeProvider\SysNodeProvider;
-use Foamycastle\UUID\Provider\ProvidesInt;
 use Foamycastle\UUID\Provider\RandomProvider\RandomHex;
 use Foamycastle\UUID\Provider\RandomProvider\RandomInt;
 use Foamycastle\UUID\Provider\RandomProvider\RandomWord;
