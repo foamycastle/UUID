@@ -46,9 +46,9 @@ abstract class UUIDBuilder implements ProvidesBinary, Stringable
     {
         return $this->providers[$key->name];
     }
-    protected function registerField(FieldKey $name, ProviderKey $provider):(FieldApi&FieldStringApi)|(FieldApi&FieldIntApi)
+    protected function registerField(FieldKey $name, ProviderKey $provider, ...$args):(FieldApi&FieldStringApi)|(FieldApi&FieldIntApi)
     {
-        return $this->fields[$name->value]=Field::FromProvider($this->provider($provider));
+        return $this->fields[$name->value]=Field::FromProvider($this->provider($provider),...$args);
     }
     protected function field(FieldKey $name):Field
     {
@@ -61,7 +61,7 @@ abstract class UUIDBuilder implements ProvidesBinary, Stringable
                 static::FORMAT,
                 ...array_values($this->fields)
             );
-        }catch (\Exception){
+        }catch (Exception){
             Field::RefreshProviders(...array_values($this->providers));
             return sprintf(
                 static::FORMAT,
