@@ -29,6 +29,11 @@ abstract class UUIDBuilder implements ProvidesBinary, Stringable
     protected string $binOutput;
 
     /**
+    * @var bool if TRUE, the output of the class is cached so that subsequent calls don't trigger a re-build
+    */
+    protected bool $useCache;
+
+    /**
      * @var array The fields that comprise the UUID string
      */
     protected array $fields;
@@ -71,7 +76,7 @@ abstract class UUIDBuilder implements ProvidesBinary, Stringable
     }
     function getBinary(): string
     {
-        return hex2bin(join('',$this->fields));
+        return $this->binOutput ??= hex2bin(join('',$this->fields));
     }
     function refresh(): static
     {
