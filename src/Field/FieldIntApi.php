@@ -11,14 +11,14 @@ use Foamycastle\UUID\FieldApi;
 interface FieldIntApi
 {
     /**
-     * Shift the bits of a field value towards signifigance
-     * @param int the number of bits to shift
+     * Shift the bits of a field value towards significance
+     * @param int $bits the number of bits to shift
      */
     function shiftLeft(int $bits):FieldApi&FieldIntApi;
 
     /**
-     * Shift the bits of a field value away from signifigance
-     * @param int the number of bits to shift
+     * Shift the bits of a field value away from significance
+     * @param int $bits the number of bits to shift
      */
     function shiftRight(int $bits):FieldApi&FieldIntApi;
 

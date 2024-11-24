@@ -50,7 +50,7 @@ abstract class Field implements FieldApi, Stringable
 
     /**
      * Add a unit of work the process queue
-     * @param callable $process The operation to be perform on the data
+     * @param callable $process The operation to be performed on the data
      */
     protected function appendProcessQueue(callable $process):void
     {
@@ -59,7 +59,7 @@ abstract class Field implements FieldApi, Stringable
 
     /**
      * Prepend a unit of work to the queue
-     * @param callable $process The operation to be perform on the data
+     * @param callable $process The operation to be performed on the data
      */
     protected function prependProcessQueue(callable $process):void
     {
@@ -108,9 +108,9 @@ abstract class Field implements FieldApi, Stringable
     }
 
     /**
-     * Create a new field object using an estblished provider object
-     * @param class-string|ProviderApi $provider The provider object or the class string to instantiatiate the provider
-     * @param ...$args Any arguments that are needed to instantiatiate the provider object
+     * Create a new field object using an established provider object
+     * @param class-string|ProviderApi $provider The provider object or the class string to instantiate the provider
+     * @param ...$args Any arguments that are needed to instantiate the provider object
      * @return (FieldIntApi&FieldApi)|(FieldApi&FieldStringApi)|null
      */
     public static function FromProvider(string|ProviderApi $provider, ...$args): null|(FieldApi&FieldStringApi)|(FieldApi&FieldIntApi)

@@ -19,7 +19,18 @@ abstract class UUIDBuilder implements ProvidesBinary, Stringable
 {
     protected const string FORMAT='%1$s-%2$s-%3$s-%4$s-%5$s';
 
+    /**
+     * @var array The data providers for the UUID builder
+     */
     protected array $providers;
+    /**
+     * @var string The binary representation of the UUID string
+     */
+    protected string $binOutput;
+
+    /**
+     * @var array The fields that comprise the UUID string
+     */
     protected array $fields;
     protected function __construct(
         protected int $version
