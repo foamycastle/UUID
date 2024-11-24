@@ -113,9 +113,14 @@ abstract class Field implements FieldApi, Stringable
      * @param ...$args Any arguments that are needed to instantiate the provider object
      * @return (FieldIntApi&FieldApi)|(FieldApi&FieldStringApi)|null
      */
-    public static function FromProvider(string|ProviderApi $provider, ...$args): null|(FieldApi&FieldStringApi)|(FieldApi&FieldIntApi)
+    public static function FromProvider(string|ProviderApi|ProviderKey $provider, ...$args): null|(FieldApi&FieldStringApi)|(FieldApi&FieldIntApi)
     {
-        //class strings are accepted as are Provider objects.
+        //If a provider key is provided, instantiate from the provider key value
+        if($provider instanceof ProviderKey){
+            $provider=$provider->value;
+        }
+
+        //class strings are accepted as are Provider objects and Provider Keys.
         //If a class string is provided, attempt to instantiate the Provider
         if(is_string($provider)){
             if(class_exists($provider)) {
