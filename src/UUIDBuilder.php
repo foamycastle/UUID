@@ -89,7 +89,7 @@ abstract class UUIDBuilder implements ProvidesBinary, Stringable
         return new UUIDVersion1($node);
     }
 
-    public static function Version3(string $namespace, string $name)
+    public static function Version3(string $namespace, string $name):UUIDVersion3
     {
         return new UUIDVersion3($namespace,$name);
     }
