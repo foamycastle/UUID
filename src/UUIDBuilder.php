@@ -6,6 +6,7 @@ use Exception;
 use Foamycastle\UUID\Builder\UUIDVersion1;
 use Foamycastle\UUID\Builder\UUIDVersion3;
 use Foamycastle\UUID\Builder\UUIDVersion4;
+use Foamycastle\UUID\Builder\UUIDVersion5;
 use Foamycastle\UUID\Field\FieldIntApi;
 use Foamycastle\UUID\Field\FieldKey;
 use Foamycastle\UUID\Field\FieldStringApi;
@@ -97,6 +98,11 @@ abstract class UUIDBuilder implements ProvidesBinary, Stringable
     public static function Version4():UUIDVersion4
     {
         return new UUIDVersion4();
+    }
+
+    public static function Version5(string $namespace, string $name):UUIDVersion5
+    {
+        return new UUIDVersion5($namespace,$name);
     }
 
 }
