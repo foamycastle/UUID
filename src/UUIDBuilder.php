@@ -7,10 +7,12 @@ use Foamycastle\UUID\Builder\UUIDVersion1;
 use Foamycastle\UUID\Builder\UUIDVersion3;
 use Foamycastle\UUID\Builder\UUIDVersion4;
 use Foamycastle\UUID\Builder\UUIDVersion5;
+use Foamycastle\UUID\Builder\UUIDVersion6;
 use Foamycastle\UUID\Field\FieldIntApi;
 use Foamycastle\UUID\Field\FieldKey;
 use Foamycastle\UUID\Field\FieldStringApi;
 
+use Foamycastle\UUID\Provider\NodeProvider\StaticNodeProvider;
 use Foamycastle\UUID\Provider\ProviderKey;
 use Foamycastle\UUID\Provider\ProvidesBinary;
 
@@ -103,6 +105,11 @@ abstract class UUIDBuilder implements ProvidesBinary, Stringable
     public static function Version5(string $namespace, string $name):UUIDVersion5
     {
         return new UUIDVersion5($namespace,$name);
+    }
+
+    public static function Version6(string|null $staticNodeProvider=null):UUIDVersion6
+    {
+        return new UUIDVersion6($staticNodeProvider);
     }
 
 }
