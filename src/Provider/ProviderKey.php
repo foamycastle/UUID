@@ -26,4 +26,6 @@ enum ProviderKey:string
     case RandomWord=RandomWord::class;
     case Counter=CounterProvider::class;
     case Hash=HashProvider::class;
+    case NilMaxProvider=NilMax::class;
+
 }

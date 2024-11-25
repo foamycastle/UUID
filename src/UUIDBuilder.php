@@ -3,6 +3,8 @@
 namespace Foamycastle\UUID;
 
 use Exception;
+use Foamycastle\UUID\Builder\UUIDMax;
+use Foamycastle\UUID\Builder\UUIDNil;
 use Foamycastle\UUID\Builder\UUIDVersion1;
 use Foamycastle\UUID\Builder\UUIDVersion3;
 use Foamycastle\UUID\Builder\UUIDVersion4;
@@ -110,6 +112,16 @@ abstract class UUIDBuilder implements ProvidesBinary, Stringable
     public static function Version6(string|null $staticNodeProvider=null):UUIDVersion6
     {
         return new UUIDVersion6($staticNodeProvider);
+    }
+
+    public static function Nil():UUIDNil
+    {
+        return new UUIDNil();
+    }
+
+    public static function Max():UUIDMax
+    {
+        return new UUIDMax();
     }
 
 }

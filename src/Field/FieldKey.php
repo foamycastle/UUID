@@ -92,4 +92,10 @@ enum FieldKey:string
      * Version 3,5
      */
     case HASH_TIME_HI='hash_time_hi_field';
+
+    case NILMAX_TIME_LO='nilmax_time_lo_field';
+    case NILMAX_TIME_MID='nilmax_time_mid_field';
+    case NILMAX_TIME_HI='nilmax_time_hi_field';
+    case NILMAX_TIME_NODE='nilmax_time_node_field';
+    case NILMAX_VAR='nilmax_time_var_field';
 }
