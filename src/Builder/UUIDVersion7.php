@@ -2,11 +2,12 @@
 
 namespace Foamycastle\UUID\Builder;
 
+use Foamycastle\UUID\Batchable;
 use Foamycastle\UUID\Field\FieldKey;
 use Foamycastle\UUID\Provider\ProviderKey;
 use Foamycastle\UUID\UUIDBuilder;
 
-class UUIDVersion7 extends UUIDBuilder
+class UUIDVersion7 extends UUIDBuilder implements Batchable
 {
     protected function __construct()
     {
@@ -56,6 +57,11 @@ class UUIDVersion7 extends UUIDBuilder
         )
              ->length(12)
              ->startAt(8);
+    }
+
+    public function batch(int $count): iterable
+    {
+
     }
 
 }
