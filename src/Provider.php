@@ -16,6 +16,31 @@ abstract class Provider implements ProviderApi
 {
     protected mixed $data=null;
 
+    /**
+     * Trigger a data refresh of the specified provider objects
+     * @param ProviderApi[] $providers
+     * @return void
+     */
+    public static function RefreshProvider(...$providers):void
+    {
+        $providers=array_values($providers);
+        foreach ($providers as $provider) {
+            $provider->refreshData();
+        }
+    }
+
+    /**
+     * Trigger a reset of the specified provider objects
+     * @param ProviderApi[] $providers
+     * @return void
+     */
+    public static function ResetProvider(...$providers):void
+    {
+        $providers=array_values($providers);
+        foreach ($providers as $provider) {
+            $provider->reset();
+        }
+    }
     public static function RandomInt(int $min,$max):RandomInt
     {
         return new RandomInt($min,$max);
