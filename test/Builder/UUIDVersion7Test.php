@@ -14,5 +14,17 @@ class UUIDVersion7Test extends TestCase
         $this->expectsOutput();
         echo $uuid.PHP_EOL;
     }
+    public function testBatch()
+    {
+        $uuid=UUIDBuilder::Version7();
+        foreach ($uuid->batch(10) as $item) {
+            $this->expectsOutput();
+            echo $item.PHP_EOL;
+        }
+        foreach ($uuid->batch(10) as $item) {
+            $this->expectsOutput();
+            echo $item.PHP_EOL;
+        }
+    }
 
 }
