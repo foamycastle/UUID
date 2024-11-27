@@ -2,13 +2,15 @@
 
 namespace Foamycastle\UUID\Builder;
 
+use Foamycastle\UUID\Batchable;
 use Foamycastle\UUID\Field;
 use Foamycastle\UUID\Field\FieldKey;
+use Foamycastle\UUID\Provider;
 use Foamycastle\UUID\Provider\ProviderKey;
 use Foamycastle\UUID\Provider\RandomProvider\RandomWord;
 use Foamycastle\UUID\UUIDBuilder;
 
-class UUIDVersion4 extends UUIDBuilder
+class UUIDVersion4 extends UUIDBuilder implements Batchable
 {
 
     protected string $output;
@@ -58,6 +60,16 @@ class UUIDVersion4 extends UUIDBuilder
     public function __toString(): string
     {
         return $this->output ??= parent::__toString();
+    }
+
+    function batch(int $count): iterable
+    {
+        Provider::RefreshProvider($this->provider(ProviderKey::RandomHex));
+        while($count-- > 0){
+            unset($this->output);
+            yield $this;
+            Provider::RefreshProvider($this->provider(ProviderKey::RandomHex));
+        }
     }
 
 }
