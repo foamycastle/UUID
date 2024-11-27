@@ -15,4 +15,15 @@ class UUIDVersion1Test extends TestCase
         $this->expectsOutput();
         echo $uuid.PHP_EOL;
     }
+
+    public function testBatch()
+    {
+        $uuid=UUIDBuilder::Version1();
+        foreach ($uuid->batch(10) as $batch) {
+            echo $batch.PHP_EOL;
+        }
+        foreach ($uuid->batch(10) as $batch) {
+            echo $batch.PHP_EOL;
+        }
+    }
 }
