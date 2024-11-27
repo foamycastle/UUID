@@ -85,7 +85,7 @@ class UUIDVersion1 extends UUIDBuilder implements Batchable
 
     function batch(int $count): iterable
     {
-        Provider::RefreshProvider($this->provider(ProviderKey::GregorianTime));
+        Provider::Refresh($this->provider(ProviderKey::GregorianTime));
         Provider::ResetProvider($this->provider(ProviderKey::Counter));
         while ($count-- > 0) {
             yield $this;

@@ -25,6 +25,19 @@ class UUIDVersion6Test extends TestCase
         echo $uuid->getBinary();
     }
 
+    public function testBatch()
+    {
+        $uuid=UUIDBuilder::Version6();
+        foreach ($uuid->batch(10) as $item) {
+            $this->expectsOutput();
+            echo $item.PHP_EOL;
+        }
+        foreach ($uuid->batch(10) as $item) {
+            $this->expectsOutput();
+            echo $item.PHP_EOL;
+        }
+    }
+
 
 
 }

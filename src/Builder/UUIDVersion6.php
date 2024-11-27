@@ -3,7 +3,9 @@
 namespace Foamycastle\UUID\Builder;
 
 use Foamycastle\UUID\Batchable;
+use Foamycastle\UUID\Field;
 use Foamycastle\UUID\Field\FieldKey;
+use Foamycastle\UUID\Provider;
 use Foamycastle\UUID\Provider\NodeProvider\StaticNodeProvider;
 use Foamycastle\UUID\Provider\ProviderKey;
 use Foamycastle\UUID\UUIDBuilder;
@@ -79,7 +81,15 @@ class UUIDVersion6 extends UUIDBuilder implements Batchable
 
     function batch(int $count):iterable
     {
-        return [];
+        Provider::Refresh($this->provider(ProviderKey::GregorianTime));
+        Provider::ResetProvider($this->provider(ProviderKey::Counter));
+        while ($count-- > 0) {
+            yield $this;
+            Field::RefreshProviders(
+                $this->field(FieldKey::TIME_VAR),
+                $this->field(FieldKey::TIME_NODE)
+            );
+        }
     }
 
 }

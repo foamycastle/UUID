@@ -64,11 +64,11 @@ class UUIDVersion4 extends UUIDBuilder implements Batchable
 
     function batch(int $count): iterable
     {
-        Provider::RefreshProvider($this->provider(ProviderKey::RandomHex));
+        Provider::Refresh($this->provider(ProviderKey::RandomHex));
         while($count-- > 0){
             unset($this->output);
             yield $this;
-            Provider::RefreshProvider($this->provider(ProviderKey::RandomHex));
+            Provider::Refresh($this->provider(ProviderKey::RandomHex));
         }
     }
 

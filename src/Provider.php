@@ -21,7 +21,7 @@ abstract class Provider implements ProviderApi
      * @param ProviderApi[] $providers
      * @return void
      */
-    public static function RefreshProvider(...$providers):void
+    public static function Refresh(...$providers):void
     {
         $providers=array_values($providers);
         foreach ($providers as $provider) {
